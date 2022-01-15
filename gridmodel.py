@@ -11,18 +11,21 @@ from agents import Positive, Negative
 
 class GridModel(Model):
 
-    def __init__(self, width, height, init_positive, init_negative):
+    def __init__(self, width = 10, height = 10, init_positive = 40, init_negative = 40, similar_wanted = 0.7):
         
         if init_positive + init_negative > width * height:
             raise Exception("Error. You are trying to add more agents than there are grid cells.")
 
         self.height = width
         self.width = height
+        self.similar_wanted = similar_wanted
         
         self.grid = SingleGrid(self.width, self.height, torus=True)
         
         self.n_agents = 0
         self.agents = []
+
+        self.running = True
 
         self.populate_grid(init_positive, init_negative)
         
@@ -67,6 +70,16 @@ class GridModel(Model):
 
         for i in range(init_negative):
             self.new_agent(Negative, self.get_random_empty_pos())
+
+    def step(self):
+        '''
+        Method that calls the step method for each of the agents.
+        '''
+        for agent in self.agents:
+            agent.step(self.similar_wanted)
+
+        # Save the statistics
+        # self.datacollector.collect(self)
 
     def visualise(self):
         """ Visualises the current grid. """
