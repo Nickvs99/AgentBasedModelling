@@ -6,14 +6,14 @@ from matplotlib.patches import Rectangle
 from mesa import Model
 from mesa.space import SingleGrid
 
-from agents import Positive, Negative
+from agents import Positive, Negative, Neutral
 
 
 class GridModel(Model):
 
-    def __init__(self, width = 10, height = 10, init_positive = 40, init_negative = 40, similar_wanted = 0.7):
+    def __init__(self, width = 10, height = 10, init_positive = 40, init_negative = 40, init_neutral = 5, similar_wanted = 0.6):
         
-        if init_positive + init_negative > width * height:
+        if init_positive + init_negative + init_neutral > width * height:
             raise Exception("Error. You are trying to add more agents than there are grid cells.")
 
         self.height = width
@@ -27,7 +27,7 @@ class GridModel(Model):
 
         self.running = True
 
-        self.populate_grid(init_positive, init_negative)
+        self.populate_grid(init_positive, init_negative, init_neutral)
         
     def new_agent(self, agent_type, pos):
         """ Add a new agent of type 'agent_type' to the grid at the position 'pos'. """
@@ -62,7 +62,7 @@ class GridModel(Model):
 
         return random.choice(sorted(self.grid.empties))
 
-    def populate_grid(self, init_positive, init_negative):
+    def populate_grid(self, init_positive, init_negative, init_neutral):
         """ Populates the grid with Positive and Negative agents. """
 
         for i in range(init_positive):
@@ -70,12 +70,18 @@ class GridModel(Model):
 
         for i in range(init_negative):
             self.new_agent(Negative, self.get_random_empty_pos())
+        
+        for i in range(init_neutral):
+            self.new_agent(Neutral, self.get_random_empty_pos())
 
     def step(self):
         '''
         Method that calls the step method for each of the agents.
         '''
+        # neutral agents dont move (always happy) so skip step if neutral
         for agent in self.agents:
+            if type(agent) == Neutral:
+                continue
             agent.step(self.similar_wanted)
 
         # Save the statistics
@@ -100,6 +106,8 @@ class GridModel(Model):
                 color = "red"
             elif isinstance(agent, Negative):
                 color = "green"
+            elif isinstance(agent, Neutral):
+                color = "black"
             else:
                 raise Exception(f"Invalid agent type encountered: {type(agent)}")
 

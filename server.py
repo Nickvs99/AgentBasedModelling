@@ -31,8 +31,10 @@ def agent_portrayal(agent):
     
     if isinstance(agent, agents.Positive):
         portrayal["Color"] = "green"
-    else:
+    elif isinstance(agent, agents.Negative):
         portrayal["Color"] = "red"
+    else:
+        portrayal["Color"] = "black"
     
     return portrayal
 
@@ -50,12 +52,13 @@ grid = CanvasGrid(agent_portrayal, height, width, resolution*min(1, (height/widt
 
 init_positive = int(0.41 * width * height)
 init_negative = init_positive
+init_neutral = int(0.05 * width * height)
 
 # Create the server, and pass the grid and the graph
 server = ModularServer(GridModel,
                        [grid],
                        "Segregation Model",
-                       {"width":width, "height":height, "init_positive": init_positive, "init_negative": init_negative})
+                       {"width":width, "height":height, "init_positive": init_positive, "init_negative": init_negative, "init_neutral": init_neutral})
 
 server.port = 8521
 
