@@ -14,6 +14,8 @@ class GeneralAgent(Agent):
         same_type = sum(1 for neighbour in neighbourhood if type(neighbour) == type(self) or type(neighbour) == Neutral)
         if len(neighbourhood) >  0 and same_type/len(neighbourhood) < similar_wanted:
             self.model.grid.move_to_empty(self)
+        else:
+            self.model.happiness += 1
 
 class Positive(GeneralAgent):
 
