@@ -50,9 +50,9 @@ grid = CanvasGrid(agent_portrayal, height, width, resolution*min(1, (height/widt
 #                       "Color": "red"}],
 #                     data_collector_name='datacollector')
 
-init_positive = int(0.41 * width * height)
+init_positive = int(0.27 * width * height)
 init_negative = init_positive
-init_neutral = int(0.05 * width * height)
+init_neutral = int(0.27 * width * height)
 
 # Create the server, and pass the grid and the graph
 server = ModularServer(GridModel,
