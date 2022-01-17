@@ -37,31 +37,21 @@ def agent_portrayal(agent):
                 # "w": 1,
                 # "h": 1,
                  }
-
     # happy agents are rect and unhappy circles
-    if isinstance(agent, agents.Positive):
-        portrayal["Color"] = "green"
-        if agent.happy == 1:
-            portrayal["Shape"] = "rect"
-            portrayal["w"] = "1"
-            portrayal["h"] = "1"
-        else:
-            portrayal["Shape"] = "circle"
-            portrayal["r"] = "0.9"
-    elif isinstance(agent, agents.Negative):
-        portrayal["Color"] = "red"
-        if agent.happy == 1:
-            portrayal["Shape"] = "rect"
-            portrayal["w"] = "1"
-            portrayal["h"] = "1"
-        else:
-            portrayal["Shape"] = "circle"
-            portrayal["r"] = "0.9"
+    if agent.happy == 0:
+        portrayal["Shape"] = "circle"
+        portrayal["r"] = "0.9"
     else:
-        portrayal["Color"] = "black"
         portrayal["Shape"] = "rect"
         portrayal["w"] = "1"
         portrayal["h"] = "1"
+
+    if isinstance(agent, agents.Positive):
+        portrayal["Color"] = "green"
+    elif isinstance(agent, agents.Negative):
+        portrayal["Color"] = "red"
+    else:
+        portrayal["Color"] = "black"
 
     return portrayal
 
