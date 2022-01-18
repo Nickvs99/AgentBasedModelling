@@ -60,12 +60,10 @@ height = 25
 resolution = 500
 grid = CanvasGrid(agent_portrayal, height, width, resolution*min(1, (height/width)), resolution*min(1, (width/height)))
 
-# # Create a dynamic linegraph
-# chart = ChartModule([{"Label": "Positive",
-#                       "Color": "green"},
-#                       {"Label": "Negative",
-#                       "Color": "red"}],
-#                     data_collector_name='datacollector')
+# Create a dynamic linegraph
+chart = ChartModule([{"Label": "happy",
+                      "Color": "green"}],
+                    data_collector_name='datacollector')
 
 happy_counter = HappinessCounter()
 
@@ -82,7 +80,7 @@ parameters = {
 
 # Create the server, and pass the grid and the graph
 server = ModularServer(GridModel,
-                       [grid, happy_counter],
+                       [grid, happy_counter, chart],
                        "Segregation Model",
                        parameters)
 

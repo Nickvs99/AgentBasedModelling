@@ -7,12 +7,13 @@ from matplotlib.patches import Rectangle
 from mesa import Model
 from mesa.space import SingleGrid
 from mesa.time import RandomActivation
+from mesa.datacollection import DataCollector
 
 from agents import Positive, Negative, Neutral
 
 
 class GridModel(Model):
-    # these parameters need to be changed here as well in server.py each time?
+    # these parameters are for if main.py is run
     def __init__(self, width = 10, height = 10, init_positive = 27, init_negative = 27, init_neutral = 27, 
     similar_wanted = 0.7):
         
@@ -29,8 +30,13 @@ class GridModel(Model):
         self.schedule = RandomActivation(self)
         self.grid = SingleGrid(self.width, self.height, torus=True)
         
+        self.datacollector = DataCollector(
+            {"happy": "happiness"},  # Model-level count of happy agents
+            # For testing purposes, agent's individual x and y
+            {"x": lambda a: a.pos[0], "y": lambda a: a.pos[1]},
+        )
+
         self.n_agents = 0
-        #self.agents = []
 
         self.running = True
 
@@ -45,7 +51,6 @@ class GridModel(Model):
         new_agent = agent_type(self.n_agents, self, pos)
         
         self.grid.place_agent(new_agent, pos)
-        #self.agents.append(new_agent)
         self.schedule.add(new_agent)
 
         return new_agent
@@ -98,7 +103,7 @@ class GridModel(Model):
             self.running = False
 
         # Save the statistics (need to import as well)
-        # self.datacollector.collect(self)
+        self.datacollector.collect(self)
 
     # def visualise(self):
     #     """ Visualises the current grid. """

@@ -10,8 +10,8 @@ class GeneralAgent(Agent):
 
     def step(self, similar_wanted):
         self.happy = 0
-        # wat doet de get_neighbors met vakken waar niemand is? is dan de lengte te lang voor de proportie similar wanted
-        neighbourhood = self.model.grid.get_neighbors(self.pos, moore=True)
+        # neighbourhood is a list of the neighbours directly around the agent
+        neighbourhood = self.model.grid.get_neighbors(self.pos, moore=True, radius = 1)
         # counts neutral types as same type as well
         same_type = sum(1 for neighbour in neighbourhood if type(neighbour) == type(self) or type(neighbour) == Neutral)
         if len(neighbourhood) >  0 and same_type/len(neighbourhood) < similar_wanted:
