@@ -100,34 +100,17 @@ class GridModel(Model):
         # Save the statistics (need to import as well)
         # self.datacollector.collect(self)
 
-    # def visualise(self):
-    #     """ Visualises the current grid. """
+    def run(self, max_iterations=1000):
 
-    #     fig, ax = plt.subplots()
+        iteration_count = 0
+        while iteration_count < max_iterations:
 
-    #     # Plot grid
-    #     for i in range(self.width + 1):
-    #         ax.axvline(i, color="black")
+            self.step()
 
-    #     for i in range(self.height + 1):
-    #         ax.axhline(i, color="black")
+            if not self.running:
+                return
 
-    #     # Plot agents
-    #     for agent in self.agents:
+            iteration_count += 1
 
-    #         if isinstance(agent, Positive):
-    #             color = "red"
-    #         elif isinstance(agent, Negative):
-    #             color = "green"
-    #         elif isinstance(agent, Neutral):
-    #             color = "black"
-    #         else:
-    #             raise Exception(f"Invalid agent type encountered: {type(agent)}")
-
-    #         ax.add_patch(Rectangle(agent.pos, 1, 1, color=color))
-
-    #     plt.xlim(0, self.width)
-    #     plt.ylim(0, self.height)
-    #     plt.show()
 
 
