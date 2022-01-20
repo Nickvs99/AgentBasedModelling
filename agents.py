@@ -20,7 +20,7 @@ class GeneralAgent(Agent):
         return same_type/len(neighbourhood)
 
     def happy(self):
-        if self.similar_neighbors() >= self.model.similar_wanted or type(self) == Neutral:
+        if type(self) == Neutral or self.similar_neighbors() >= self.model.similar_wanted:
             return True
         
         return False

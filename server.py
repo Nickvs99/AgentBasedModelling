@@ -22,7 +22,7 @@ class HappinessCounter(TextElement):
     Shows the number of happy agents
     """
     def render(self, model):
-        return "Happy agents: " + str(int(model.happiness))
+        return f"Happy agents: {int(model.happiness)}/{model.schedule.get_agent_count()}"
 
 class Segregation_Param_Test(TextElement):
     """
