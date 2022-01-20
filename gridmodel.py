@@ -28,13 +28,15 @@ class GridModel(Model):
         self.similar_wanted = similar_wanted
 
         # shows happiness 0 before model starts
-        self.happiness = 0        
+        self.happiness = 0 
+        self.entropy = 0       
 
         self.schedule = RandomActivation(self)
         self.grid = SingleGrid(self.width, self.height, torus=True)
         
         self.datacollector = DataCollector(
-            {"happy": "happiness"},  # Model-level count of happy agents
+            {"happy": "happiness", # Model-level count of happy agents
+             "entropy": "entropy"},
             # For testing purposes, agent's individual x and y
             {"x": lambda a: a.pos[0], "y": lambda a: a.pos[1]},
         )
@@ -91,7 +93,7 @@ class GridModel(Model):
         for i in range(init_neutral):
             self.new_agent(Neutral, self.get_random_empty_pos())
 
-    def step(self):
+    def step(self, collect=True):
         '''
         Method that calls the step method for each of the agents.
         '''
@@ -105,16 +107,22 @@ class GridModel(Model):
         if self.happiness == self.schedule.get_agent_count():
             self.running = False
 
+        if collect:
+            self.collect()
+
+    def collect(self):
+        self.entropy = self.calc_entropy()
+
         # Save the statistics (need to import as well)
         self.datacollector.collect(self)
-
-    def run(self, max_iterations=1000):
+        
+    def run(self, max_iterations=1000, collect=True):
 
         iteration_count = 0
         while iteration_count < max_iterations:
 
-            self.step()
-
+            self.step(collect=collect)
+            
             if not self.running:
                 return
 
