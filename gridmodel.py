@@ -9,6 +9,7 @@ from mesa import Model
 from mesa.space import SingleGrid
 from mesa.time import RandomActivation
 from mesa.datacollection import DataCollector
+from spatialentropy import leibovici_entropy, altieri_entropy
 
 from agents import Positive, Negative, Neutral
 
@@ -27,7 +28,7 @@ class GridModel(Model):
         self.similar_wanted = similar_wanted
 
         # shows happiness 0 before model starts
-        self.happiness = 0
+        self.happiness = 0        
 
         self.schedule = RandomActivation(self)
         self.grid = SingleGrid(self.width, self.height, torus=True)
@@ -118,3 +119,23 @@ class GridModel(Model):
                 return
 
             iteration_count += 1
+
+    def calc_entropy(self):
+
+        points = []
+        types = []
+        for agent in self.schedule.agents:
+
+            points.append(list(agent.pos))
+
+            if isinstance(agent, Positive):
+                type_value = 0
+            else:
+                type_value = 1
+
+            types.append(type_value)
+        
+        # TODO look into different distance values
+        e = leibovici_entropy(points, types)
+
+        return e.entropy
