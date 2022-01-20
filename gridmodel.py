@@ -1,5 +1,6 @@
 from pyexpat import model
 import random
+import numpy as np
 
 import matplotlib.pyplot as plt
 from matplotlib.patches import Rectangle
@@ -24,9 +25,10 @@ class GridModel(Model):
         self.width = height
         self.neutral = init_neutral
         self.similar_wanted = similar_wanted
+
         # shows happiness 0 before model starts
         self.happiness = 0
-        
+
         self.schedule = RandomActivation(self)
         self.grid = SingleGrid(self.width, self.height, torus=True)
         
@@ -92,13 +94,13 @@ class GridModel(Model):
         '''
         Method that calls the step method for each of the agents.
         '''
-        #Happiness counter always includes neutral agents
+        # happiness counter always includes neutral agents
         self.happiness = self.neutral
         # neutral agents don't move (always happy) so skip step if neutral
         for agent in self.schedule.agents:
             if type(agent) == Neutral:
                 continue
-            agent.step(self.similar_wanted)
+            agent.step() #self.similar_wanted)
         if self.happiness == self.schedule.get_agent_count():
             self.running = False
 
@@ -116,6 +118,3 @@ class GridModel(Model):
                 return
 
             iteration_count += 1
-
-
-

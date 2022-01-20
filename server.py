@@ -24,6 +24,13 @@ class HappinessCounter(TextElement):
     def render(self, model):
         return "Happy agents: " + str(int(model.happiness))
 
+class Segregation_Param_Test(TextElement):
+    """
+    Shows the number of happy agents
+    """
+    def render(self, model):
+        return "Average similar neighbors: " + str(np.mean([agent.similar_neighbors() for agent in model.schedule.agents]))
+
 # You can change this to whatever ou want. Make sure to make the different types
 # of agents distinguishable
 def agent_portrayal(agent):
@@ -38,7 +45,7 @@ def agent_portrayal(agent):
                 # "h": 1,
                  }
     # happy agents are rect and unhappy circles
-    if agent.happy == 0:
+    if not agent.happy():
         portrayal["Shape"] = "circle"
         portrayal["r"] = "0.9"
     else:
@@ -80,7 +87,7 @@ parameters = {
 
 # Create the server, and pass the grid and the graph
 server = ModularServer(GridModel,
-                       [grid, happy_counter, chart],
+                       [grid, happy_counter, Segregation_Param_Test(), chart],
                        "Segregation Model",
                        parameters)
 

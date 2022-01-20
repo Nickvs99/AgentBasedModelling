@@ -6,21 +6,32 @@ class GeneralAgent(Agent):
         super().__init__(unique_id, model)
 
         self.pos = pos
-        self.happy = 1
+        # self.happy = True
 
-    def step(self, similar_wanted):
-        self.happy = 0
+    def similar_neighbors(self):
         # neighbourhood is a list of the neighbours directly around the agent
         neighbourhood = self.model.grid.get_neighbors(self.pos, moore=True, radius = 1)
+
+        if len(neighbourhood) == 0:
+            return 0
+
         # counts neutral types as same type as well
         same_type = sum(1 for neighbour in neighbourhood if type(neighbour) == type(self) or type(neighbour) == Neutral)
-        if len(neighbourhood) >  0 and same_type/len(neighbourhood) < similar_wanted:
+        return same_type/len(neighbourhood)
+
+    def happy(self):
+        if self.similar_neighbors() >= self.model.similar_wanted or type(self) == Neutral:
+            return True
+        
+        return False
+        
+    def step(self): #, similar_wanted):
+        if not self.happy():
             self.model.grid.move_to_empty(self)
-            return self.happy
+            # return False
         else:
             self.model.happiness += 1
-            self.happy = 1
-            return self.happy
+            # return True
 
 class Positive(GeneralAgent):
 
