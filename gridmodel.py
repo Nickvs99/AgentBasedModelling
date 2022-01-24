@@ -16,9 +16,8 @@ from agents import Positive, Negative, Neutral
 
 
 class GridModel(Model):
-    # these parameters are for if main.py is run
-    def __init__(self, width = 10, height = 10, init_positive = 27, init_negative = 27, init_neutral = 27, 
-    similar_wanted = 0.7, use_network = 0, network_p = 0.02):
+    def __init__(self, width = 10, height = 10, init_positive = 33, init_negative = 33, init_neutral = 33, 
+    similar_wanted = 0.75, use_network = 0, network_p = 0.02):
         
         if init_positive + init_negative + init_neutral > width * height:
             raise Exception("Error. You are trying to add more agents than there are grid cells.")
@@ -109,13 +108,18 @@ class GridModel(Model):
         '''
         Method that calls the step method for each of the agents.
         '''
+
+        self.schedule.steps += 1 # Needed for OFAT
+
         # happiness counter always includes neutral agents
         self.happiness = self.neutral
+        
         # neutral agents don't move (always happy) so skip step if neutral
         for agent in self.schedule.agents:
             if type(agent) == Neutral:
                 continue
             agent.step() #self.similar_wanted)
+
         if self.happiness == self.schedule.get_agent_count():
             self.running = False
 
@@ -148,16 +152,15 @@ class GridModel(Model):
         types = []
         for agent in self.schedule.agents:
 
-            points.append(list(agent.pos))
-
-            if isinstance(agent, Positive):
+            # Neutrals are ignored in the entropy calculations
+            if isinstance(agent, Neutral):
+                continue
+            elif isinstance(agent, Positive):
                 type_value = 0
             else:
                 type_value = 1
 
+            points.append(list(agent.pos))
             types.append(type_value)
-        
-        # TODO look into different distance values
-        e = leibovici_entropy(points, types)
 
-        return e.entropy
+        return leibovici_entropy(points, types, d=1.5).entropy

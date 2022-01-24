@@ -16,29 +16,28 @@ from itertools import combinations
 problem = {
     'num_vars': 4,
     'names': ['init_positive', 'init_negative', 'init_neutral', 'similar_wanted'],
-    'bounds': [[18, 30], [18, 30], [18, 30], [0.1, 0.8]]
+    'bounds': [[0, 33], [0, 33], [0, 33], [0, 1]]
 }
 
 # Set the repetitions, the amount of steps, and the amount of distinct values per variable
-replicates = 30
-max_steps = 100
-distinct_samples = 30
+replicates = 10
+max_steps = 1000
+distinct_samples = 100
 
 # Set the outputs
-model_reporters = {"Happy agents": lambda m: int(m.happiness)}
+model_reporters = {"Happy agents": lambda m: int(m.happiness),
+                    "Entropy": lambda m: m.calc_entropy()}
 
 data = {}
 
 for i, var in enumerate(problem['names']):
     # Get the bounds for this variable and get <distinct_samples> samples within this space (uniform)
 
-    
-
     samples = np.linspace(*problem['bounds'][i], num=distinct_samples, dtype = int)
 
     if var == 'similar_wanted':
     	samples = np.linspace(*problem['bounds'][i], num=distinct_samples, dtype = float)
-    
+
     batch = BatchRunner(GridModel, 
                         max_steps=max_steps,
                         iterations=replicates,
@@ -51,7 +50,7 @@ for i, var in enumerate(problem['names']):
     data[var] = batch.get_model_vars_dataframe()
 
 
-    "-------------------------------Plot the influence of the parameters-------------------------------------------"
+"-------------------------------Plot the influence of the parameters-------------------------------------------"
 
 def plot_param_var_conf(ax, df, var, param, i):
     """
@@ -90,8 +89,8 @@ def plot_all_vars(df, param):
     for i, var in enumerate(problem['names']):
         plot_param_var_conf(axs[i], data[var], var, param, i)
 
-param = "Happy agents"
-plot_all_vars(data, param)
-plt.show()
 
-             
+plot_all_vars(data, "Happy agents")
+plot_all_vars(data, "Entropy")
+plt.show()
+      
