@@ -6,7 +6,19 @@ class GeneralAgent(Agent):
         super().__init__(unique_id, model)
 
         self.pos = pos
+        # self.node = None
         # self.happy = True
+
+    def similar_network_neighbors(self):
+        # neighbourhood is a list of the neighbours directly around the agent
+        neighbourhood = list(self.model.G.neighbors(self.unique_id))
+
+        if len(neighbourhood) == 0:
+            return 0
+
+        # counts neutral types as same type as well
+        same_type = sum(1 for neighbour in neighbourhood if type(next((x for x in self.model.schedule.agents if x.unique_id == neighbour), None)) in [type(self), Neutral])
+        return same_type/len(neighbourhood)
 
     def similar_neighbors(self):
         # neighbourhood is a list of the neighbours directly around the agent
@@ -20,7 +32,7 @@ class GeneralAgent(Agent):
         return same_type/len(neighbourhood)
 
     def happy(self):
-        if type(self) == Neutral or self.similar_neighbors() >= self.model.similar_wanted:
+        if type(self) == Neutral or self.similar_neighbors() >= self.model.similar_wanted or (self.model.use_network and self.similar_network_neighbors() >= self.model.similar_wanted):
             return True
         
         return False

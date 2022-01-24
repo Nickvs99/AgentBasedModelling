@@ -10,6 +10,7 @@ from mesa.space import SingleGrid
 from mesa.time import RandomActivation
 from mesa.datacollection import DataCollector
 from spatialentropy import leibovici_entropy, altieri_entropy
+import networkx as nx
 
 from agents import Positive, Negative, Neutral
 
@@ -17,7 +18,7 @@ from agents import Positive, Negative, Neutral
 class GridModel(Model):
     # these parameters are for if main.py is run
     def __init__(self, width = 10, height = 10, init_positive = 27, init_negative = 27, init_neutral = 27, 
-    similar_wanted = 0.7):
+    similar_wanted = 0.7, use_network = 0, network_p = 0.02):
         
         if init_positive + init_negative + init_neutral > width * height:
             raise Exception("Error. You are trying to add more agents than there are grid cells.")
@@ -46,14 +47,21 @@ class GridModel(Model):
         self.running = True
 
         self.populate_grid(init_positive, init_negative, init_neutral)
+
+        self.use_network = use_network
+        if self.use_network:
+            self.network_p = network_p
+            self.G = nx.erdos_renyi_graph(n=self.n_agents, p=self.network_p)
+            # self.network = NetworkGrid(self.G)
+            # self.populate_network()
         
         
     def new_agent(self, agent_type, pos):
         """ Add a new agent of type 'agent_type' to the grid at the position 'pos'. """
 
-        self.n_agents += 1
-        
         new_agent = agent_type(self.n_agents, self, pos)
+
+        self.n_agents += 1
         
         self.grid.place_agent(new_agent, pos)
         self.schedule.add(new_agent)
@@ -93,6 +101,10 @@ class GridModel(Model):
         for i in range(init_neutral):
             self.new_agent(Neutral, self.get_random_empty_pos())
 
+    # def populate_network(self):
+    #     for agent in self.schedule.agents:
+
+
     def step(self, collect=True):
         '''
         Method that calls the step method for each of the agents.
@@ -109,6 +121,8 @@ class GridModel(Model):
 
         if collect:
             self.collect()
+
+        # self.G = nx.erdos_renyi_graph(n=self.n_agents, p=self.network_p)
 
     def collect(self):
         self.entropy = self.calc_entropy()

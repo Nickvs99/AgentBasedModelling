@@ -22,7 +22,7 @@ class HappinessCounter(TextElement):
     Shows the number of happy agents
     """
     def render(self, model):
-        return f"Happy agents: {int(model.happiness)}/{model.schedule.get_agent_count()}"
+        return f"Happy agents: {int(sum([agent.happy() for agent in model.schedule.agents]))}/{model.schedule.get_agent_count()}"
 
 class Segregation_Param_Test(TextElement):
     """
@@ -82,7 +82,9 @@ parameters = {
     "init_positive": UserSettableParameter("slider","Number Positive Agents:",proportion_agents, 0, width*height, 0.01*width*height),
     "init_negative": UserSettableParameter("slider","Number Negative Agents:",proportion_agents, 0, width*height, 0.01*width*height), 
     "init_neutral": UserSettableParameter("slider","Number Neutral Agents:",proportion_agents, 0, width*height, 0.01*width*height),
-    "similar_wanted": UserSettableParameter("slider","Proportion Similarity Desired:",0.7, 0, 1, 0.1)
+    "similar_wanted": UserSettableParameter("slider","Proportion Similarity Desired:",0.7, 0, 1, 0.1),
+    "use_network": UserSettableParameter("slider","Use network?", 0, 0, 1, 1),
+    "network_p": UserSettableParameter("slider","Network parameter:",0.02, 0, 0.2, 0.01)
 }
 
 # Create the server, and pass the grid and the graph
