@@ -20,10 +20,10 @@ problem = {
 }
 
 # Set the repetitions, the amount of steps, and the amount of distinct values per variable
-replicates = 10
+replicates = 25
 max_steps = 1000
 distinct_samples = 100
-
+    
 # Set the outputs
 model_reporters = {"Happy agents": lambda m: int(m.happiness),
                     "Entropy": lambda m: m.calc_entropy()}
@@ -36,7 +36,13 @@ for i, var in enumerate(problem['names']):
     samples = np.linspace(*problem['bounds'][i], num=distinct_samples, dtype = int)
 
     if var == 'similar_wanted':
-    	samples = np.linspace(*problem['bounds'][i], num=distinct_samples, dtype = float)
+        
+        # Similar wanted only has 9 distinct values, there is no difference between a similar wanted
+        # value of 0.9 vs 0.95 for example. Might need to chance when social structure is implemented.
+    	samples = np.linspace(*problem['bounds'][i], num=9, dtype = float)
+    
+    # Remove sample values who are present multiple times. No need to test them several times
+    samples = np.unique(samples)
 
     batch = BatchRunner(GridModel, 
                         max_steps=max_steps,
