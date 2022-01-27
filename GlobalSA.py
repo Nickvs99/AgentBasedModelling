@@ -114,15 +114,13 @@ save_results_to = 'C:/Users/ysijp/OneDrive/Bureaublad/Agent-Based Modelling/Grou
 
 for i in range(len(order_labels)):
     plot_index(Si_happy_agents, problem['names'], order_labels[i], title_labels[i] + " " "(Happy agents)")
-    plt.savefig(save_results_to + title_labels[i] + "_Happy agents" + '.png', dpi = 300)
+    plt.savefig(save_results_to + title_labels[i] + "_Happy agents" + '.png', bbox_inches="tight",  dpi = 300)
     plt.show()
 
 for i in range(len(order_labels)):
     plot_index(Si_entropy, problem['names'], order_labels[i], title_labels[i] + " " "(Entropy)")
-    plt.savefig(save_results_to + title_labels[i] + "_Entropy" + '.png', dpi = 300)
+    plt.savefig(save_results_to + title_labels[i] + "_Entropy" + '.png', bbox_inches="tight", dpi = 300)
     plt.show()
-
-    
 
 
 
