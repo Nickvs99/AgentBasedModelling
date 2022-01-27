@@ -24,10 +24,11 @@ replicates = 8
 max_steps = 100
 distinct_samples = 8
 
-model_reporters = {"Happy agents": lambda m: int(m.happiness)}
+model_reporters = {"Happy agents": lambda m: int(m.happiness),
+                    "Entropy": lambda m: m.calc_entropy()}
 
 #Get samples
-param_values = saltelli.sample(problem, distinct_samples)
+param_values = saltelli.sample(problem, distinct_samples, calc_second_order = False)
 
 batch = BatchRunner(model, 
                     max_steps=max_steps,
@@ -37,7 +38,7 @@ batch = BatchRunner(model,
 count = 0
 data = pd.DataFrame(index=range(replicates*len(param_values)), 
                                 columns=['init_positive', 'init_negative', 'init_neutral', 'similar_wanted'])
-data['Run'], data['Happy agents'] = None, None
+data['Run'], data['Happy agents'], data['Entropy'] = None, None, None
 
 for i in range(replicates):
     for vals in param_values: 
@@ -54,19 +55,21 @@ for i in range(replicates):
         iteration_data = batch.get_model_vars_dataframe().iloc[count]
         iteration_data['Run'] = count # Don't know what causes this, but iteration number is not correctly filled
         data.iloc[count, 0:4] = vals
-        data.iloc[count, 4:6] = iteration_data
+        data.iloc[count, 4:7] = iteration_data
         count += 1
         
         for i in range(10, 101, 10):
             if count / (len(param_values) * (replicates)) * 100 == i:
                 print(f'{i}% done!')
-
-        
-        
-
 print(data)
 
-Si = sobol.analyze(problem, data['Happy agents'].values, print_to_console=True)
+#data.to_csv('GlobalSA_data.csv')
+
+Si_happy_agents = sobol.analyze(problem, data['Happy agents'].values, calc_second_order=False, print_to_console=True)
+Si_entropy = sobol.analyze(problem, data['Entropy'].values, calc_second_order=False, print_to_console=True)
+Si_data = (Si_happy_agents, Si_entropy)
+#total_Si, first_Si = Si.to_df()
+
 
 def plot_index(s, params, i, title=''):
     """
@@ -102,11 +105,21 @@ def plot_index(s, params, i, title=''):
     plt.axvline(0, c='k')
 
 
-order_labels = ['1', '2', 'T']
-title_labels = ['First order sensitivity', 'Second order sensitivity', 'Total order sensitivity']    
+order_labels = ['1', 'T']
+title_labels = ['First order sensitivity', 'Total order sensitivity']  
+Si_labels = ['Happy agents', 'Entropy']  
+
+# Very simple code to save the sensivity analysis plots to the desired working directory
+save_results_to = 'C:/Users/ysijp/OneDrive/Bureaublad/Agent-Based Modelling/GroupProject/Figures/'
 
 for i in range(len(order_labels)):
-    plot_index(Si, problem['names'], order_labels[i], title_labels[i])
+    plot_index(Si_happy_agents, problem['names'], order_labels[i], title_labels[i] + " " "(Happy agents)")
+    plt.savefig(save_results_to + title_labels[i] + "_Happy agents" + '.png', dpi = 300)
+    plt.show()
+
+for i in range(len(order_labels)):
+    plot_index(Si_entropy, problem['names'], order_labels[i], title_labels[i] + " " "(Entropy)")
+    plt.savefig(save_results_to + title_labels[i] + "_Entropy" + '.png', dpi = 300)
     plt.show()
 
     
