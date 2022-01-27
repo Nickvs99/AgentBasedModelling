@@ -14,13 +14,13 @@ def run_experiment_similar_wanted(attribute, ylabel="", n_iterations=10):
     stds = []
 
     for similar_wanted in similar_wanted_values:
-        print(f"\r Calculating {attribute} for similar_wanted = {similar_wanted:.3f}", end="")
+        print(f"\rCalculating {attribute} for similar_wanted = {similar_wanted:.3f}", end="")
 
         avg, std = collect_avg_and_std(
             attribute,
             width=20, height=20,
-            init_positive=190,
-            init_negative=190,
+            init_positive=0.475,
+            init_negative=0.475,
             init_neutral=0,
             similar_wanted=similar_wanted,
             n_iterations=n_iterations
@@ -38,25 +38,23 @@ def run_experiment_similar_wanted(attribute, ylabel="", n_iterations=10):
 
 def run_experiment_neutrals(attribute, ylabel="", n_iterations=10):
 
-    width = height = 20
-    area = width * height
-    empty_spaces = int(0.05 * area)
+    empty_spaces = 0.05
 
-    init_neutral_values = np.linspace(0, area / 2, num=10, dtype=int)
-    similar_wanted_values = np.linspace(0.375, 0.875, num=9, dtype=float)
+    init_neutral_values = np.linspace(0, 0.5, num=11, dtype=float)
+    similar_wanted_values = np.linspace(0, 1, num=9, dtype=float)
 
     for similar_wanted in similar_wanted_values:
         avgs = []
         stds = []
 
         for init_neutral in init_neutral_values:
-            print(f"\r Calculating {attribute} for similar_wanted = {similar_wanted:.3f} and init_neutral = {init_neutral}", end="")
+            print(f"\rCalculating {attribute} for similar_wanted = {similar_wanted:.3f} and init_neutral = {init_neutral:.3f}", end="")
 
-            init_positive = init_negative = int((area - empty_spaces - init_neutral) / 2)
+            init_positive = init_negative = (1 - empty_spaces - init_neutral) / 2
             
             avg, std = collect_avg_and_std(
                 attribute,
-                width=width, height=height,
+                width=20, height=20,
                 init_positive=init_positive,
                 init_negative=init_negative,
                 init_neutral=init_neutral,
@@ -69,12 +67,11 @@ def run_experiment_neutrals(attribute, ylabel="", n_iterations=10):
 
         print()
 
-        line_plot(init_neutral_values, np.array(avgs), np.array(stds),
-                xlabel="init_neutral", ylabel=attribute, label=f"similar_wanted = {similar_wanted}")
+        line_plot(init_neutral_values * 100, np.array(avgs), np.array(stds),
+                xlabel="init_neutral [%]", ylabel=attribute, label=f"similar_wanted = {similar_wanted}")
     
     plt.legend()
     plt.show()
-
 
 def collect_avg_and_std(attribute, width=20, height=20, init_positive=190, init_negative=190, init_neutral=0, similar_wanted=0.75, n_iterations=10):
     """
@@ -123,8 +120,8 @@ if __name__ == "__main__":
     
     # TODO do both entropy and happiness experiment simultaneous
          
-    # run_experiment_similar_wanted("happy", ylabel="Happiness level", n_iterations=5)
-    # run_experiment_similar_wanted("entropy", ylabel="Entropy", n_iterations=25)
+    run_experiment_similar_wanted("happy", ylabel="Happiness level", n_iterations=25)
+    run_experiment_similar_wanted("entropy", ylabel="Entropy", n_iterations=25)
 
-    run_experiment_neutrals("happy", ylabel="Happiness level", n_iterations=5)
+    run_experiment_neutrals("happy", ylabel="Happiness level", n_iterations=25)
     run_experiment_neutrals("entropy", ylabel="Entropy", n_iterations=25)

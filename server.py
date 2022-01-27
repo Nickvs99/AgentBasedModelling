@@ -74,14 +74,14 @@ chart = ChartModule([{"Label": "happy",
                       "Color": "green"}],
                     data_collector_name='datacollector')
 
-proportion_agents = int(0.27 * width * height)
+proportion_agents = 0.27
 parameters = {
     "width": width,
     "height": height,
     # proportion agents is starting value, then can slide from 0 to max agents with steps of 1% of agent number
-    "init_positive": UserSettableParameter("slider","Number Positive Agents:",proportion_agents, 0, width*height, 0.01*width*height),
-    "init_negative": UserSettableParameter("slider","Number Negative Agents:",proportion_agents, 0, width*height, 0.01*width*height), 
-    "init_neutral": UserSettableParameter("slider","Number Neutral Agents:",proportion_agents, 0, width*height, 0.01*width*height),
+    "init_positive": UserSettableParameter("slider","Number Positive Agents:",proportion_agents, 0, 1, 0.005),
+    "init_negative": UserSettableParameter("slider","Number Negative Agents:",proportion_agents, 0, 1, 0.005), 
+    "init_neutral": UserSettableParameter("slider","Number Neutral Agents:",proportion_agents, 0, 1, 0.005),
     "similar_wanted": UserSettableParameter("slider","Proportion Similarity Desired:",3/8, 0, 1, 1/8),
     "use_network": UserSettableParameter("slider","Use network?", 0, 0, 1, 1),
     "network_p": UserSettableParameter("slider","Network parameter:",0.02, 0, 0.2, 0.01)

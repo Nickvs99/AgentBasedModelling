@@ -16,13 +16,13 @@ from itertools import combinations
 problem = {
     'num_vars': 4,
     'names': ['init_positive', 'init_negative', 'init_neutral', 'similar_wanted'],
-    'bounds': [[0, 33], [0, 33], [0, 33], [0, 1]]
+    'bounds': [[0, 0.33], [0, 0.33], [0, 0.33], [0, 1]]
 }
 
 # Set the repetitions, the amount of steps, and the amount of distinct values per variable
 replicates = 25
 max_steps = 1000
-distinct_samples = 100
+distinct_samples = 34
     
 # Set the outputs
 model_reporters = {"Happy agents": lambda m: int(m.happiness),
@@ -33,7 +33,7 @@ data = {}
 for i, var in enumerate(problem['names']):
     # Get the bounds for this variable and get <distinct_samples> samples within this space (uniform)
 
-    samples = np.linspace(*problem['bounds'][i], num=distinct_samples, dtype = int)
+    samples = np.linspace(*problem['bounds'][i], num=distinct_samples, dtype = float)
 
     if var == 'similar_wanted':
         
