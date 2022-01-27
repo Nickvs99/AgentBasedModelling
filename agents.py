@@ -7,43 +7,43 @@ class GeneralAgent(Agent):
 
         self.pos = pos
         self.node = None
-        # self.happy = True
+        self.theta = self.model.similar_wanted
 
-    def similar_network_neighbors(self):
-        # neighbourhood is a list of the neighbours directly around the agent
-        neighbourhood = [self.model.G.nodes[neighbour]["agent"] for neighbour in self.model.G.neighbors(self.node)]
-        
-        if len(neighbourhood) == 0:
+    def neighbors(self):
+        # a list of the neighbors directly around the agent
+        return self.model.grid.get_neighbors(self.pos, moore=True, radius = 1)
+
+    def network_neighbors(self):
+        # a list of the neighbors connected to the agent
+        return [self.model.G.nodes[neighbor]["agent"] for neighbor in self.model.G.neighbors(self.node)]
+
+    def similar_neighbors(self, neighborhood):
+        if len(neighborhood) == 0:
             return 0
 
         # counts neutral types as same type as well
-        same_type = sum(1 for neighbour in neighbourhood if type(neighbour) == type(self) or type(neighbour) == Neutral)
-        return same_type/len(neighbourhood)
-
-    def similar_neighbors(self):
-        # neighbourhood is a list of the neighbours directly around the agent
-        neighbourhood = self.model.grid.get_neighbors(self.pos, moore=True, radius = 1)
-
-        if len(neighbourhood) == 0:
-            return 0
-
-        # counts neutral types as same type as well
-        same_type = sum(1 for neighbour in neighbourhood if type(neighbour) == type(self) or type(neighbour) == Neutral)
-        return same_type/len(neighbourhood)
+        same_type = sum(1 for neighbor in neighborhood if type(neighbor) == type(self) or type(neighbor) == Neutral)
+        return same_type/len(neighborhood)
 
     def happy(self):
-        if type(self) == Neutral or self.similar_neighbors() >= self.model.similar_wanted or (self.model.use_network and self.similar_network_neighbors() >= self.model.similar_wanted):
+        if type(self) == Neutral or self.similar_neighbors(self.neighbors()) >= self.theta or (self.model.use_network and self.similar_neighbors(self.network_neighbors()) >= self.theta):
             return True
         
         return False
         
     def step(self): #, similar_wanted):
-        if not self.happy():
-            self.model.grid.move_to_empty(self)
-            # return False
-        else:
-            self.model.happiness += 1
-            # return True
+        if not type(self) == Neutral:
+            if not self.happy():
+                self.model.grid.move_to_empty(self)
+                # return False
+            # else:
+            #     self.model.happiness += 1
+                # return True
+
+            if self.model.use_network:
+                for neutral in [neighbor for neighbor in self.network_neighbors() if type(neighbor) == Neutral]:
+                    self.theta *= self.model.decrease_intolerance
+
 
 class Positive(GeneralAgent):
 

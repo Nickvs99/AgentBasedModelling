@@ -17,7 +17,7 @@ from agents import Positive, Negative, Neutral
 
 class GridModel(Model):
     def __init__(self, width = 10, height = 10, init_positive = 0.33, init_negative = 0.33, init_neutral = 0.33, 
-    similar_wanted = 0.75, use_network = 0, network_p = 0.02):
+    similar_wanted = 0.75, use_network = 0, network_p = 0.02, randomize_part = 0.0, decrease_intolerance = 0.99):
         """
         Initialize the GridModel. init_positive, init_negative, and init_neutral are relative
         values, e.g. 5% of the grid needs to have neutral agents then set init_neutral to 0.05.
@@ -39,7 +39,7 @@ class GridModel(Model):
         self.similar_wanted = similar_wanted
 
         # shows happiness 0 before model starts
-        self.happiness = 0
+        # self.happiness = 0
         self.entropy = 0       
 
         self.schedule = RandomActivation(self)
@@ -56,14 +56,16 @@ class GridModel(Model):
             self.network_p = network_p
             self.G = nx.erdos_renyi_graph(n=self.n_agents, p=self.network_p)
             self.populate_network()
+            self.randomize_part = randomize_part
+            self.decrease_intolerance = decrease_intolerance
         
         # counts number happy agents upon initialization
-        for agent in self.schedule.agents:
-            if agent.happy():
-                self.happiness += 1
+        # for agent in self.schedule.agents:
+        #     if agent.happy():
+        #         self.happiness += 1
 
         self.datacollector = DataCollector(
-            {"happy": "happiness", # Model-level count of happy agents
+            {"happy": lambda m: self.happiness(), # Model-level count of happy agents
              "entropy": "entropy"},
             # For testing purposes, agent's individual x and y
             {"x": lambda a: a.pos[0], "y": lambda a: a.pos[1]},
@@ -127,6 +129,8 @@ class GridModel(Model):
             agent.node = node_id
             self.G.nodes[node_id]["agent"] = agent
 
+    def happiness(self):
+        return int(sum([agent.happy() for agent in self.schedule.agents]))
 
     def step(self, collect=True):
         '''
@@ -135,22 +139,16 @@ class GridModel(Model):
 
         self.schedule.steps += 1 # Needed for OFAT
 
-        # happiness counter always includes neutral agents
-        self.happiness = self.neutral
-        
-        # neutral agents don't move (always happy) so skip step if neutral
-        for agent in self.schedule.agents:
-            if type(agent) == Neutral:
-                continue
-            agent.step() #self.similar_wanted)
+        self.schedule.step()
 
-        if self.happiness == self.schedule.get_agent_count():
+        if self.happiness() == self.schedule.get_agent_count():
             self.running = False
 
         if collect:
             self.collect()
 
-        # self.G = nx.erdos_renyi_graph(n=self.n_agents, p=self.network_p)
+        if self.use_network:
+            nx.algorithms.swap.double_edge_swap(self.G, nswap=int(self.randomize_part * self.n_agents), max_tries=1000)
 
     def collect(self):
         self.entropy = self.calc_entropy()
@@ -159,8 +157,8 @@ class GridModel(Model):
         self.datacollector.collect(self)
         
     def run(self, max_iterations=1000, collect=True):
-
         iteration_count = 0
+
         while iteration_count < max_iterations:
 
             self.step(collect=collect)
@@ -171,11 +169,10 @@ class GridModel(Model):
             iteration_count += 1
 
     def calc_entropy(self):
-
         points = []
         types = []
-        for agent in self.schedule.agents:
 
+        for agent in self.schedule.agents:
             # Neutrals are ignored in the entropy calculations
             if isinstance(agent, Neutral):
                 continue
