@@ -28,18 +28,11 @@ class GridModel(Model):
         self.similar_wanted = similar_wanted
 
         # shows happiness 0 before model starts
-        self.happiness = 0 
+        self.happiness = 0
         self.entropy = 0       
 
         self.schedule = RandomActivation(self)
         self.grid = SingleGrid(self.width, self.height, torus=True)
-        
-        self.datacollector = DataCollector(
-            {"happy": "happiness", # Model-level count of happy agents
-             "entropy": "entropy"},
-            # For testing purposes, agent's individual x and y
-            {"x": lambda a: a.pos[0], "y": lambda a: a.pos[1]},
-        )
 
         self.n_agents = 0
 
@@ -54,6 +47,18 @@ class GridModel(Model):
             # self.network = NetworkGrid(self.G)
             # self.populate_network()
         
+        # counts number happy agents upon initialization
+        for agent in self.schedule.agents:
+            if agent.happy():
+                self.happiness += 1
+
+        self.datacollector = DataCollector(
+            {"happy": "happiness", # Model-level count of happy agents
+             "entropy": "entropy"},
+            # For testing purposes, agent's individual x and y
+            {"x": lambda a: a.pos[0], "y": lambda a: a.pos[1]},
+        )
+        self.collect()
         
     def new_agent(self, agent_type, pos):
         """ Add a new agent of type 'agent_type' to the grid at the position 'pos'. """
