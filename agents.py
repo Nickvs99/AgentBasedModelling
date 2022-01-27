@@ -11,7 +11,7 @@ class GeneralAgent(Agent):
 
     def similar_network_neighbors(self):
         # neighbourhood is a list of the neighbours directly around the agent
-        neighbourhood = [self.model.G.nodes[neighbour]["agent"][0] for neighbour in self.model.G.neighbors(self.node)]
+        neighbourhood = [self.model.G.nodes[neighbour]["agent"] for neighbour in self.model.G.neighbors(self.node)]
         
         if len(neighbourhood) == 0:
             return 0

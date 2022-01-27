@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 from matplotlib.patches import Rectangle
 
 from mesa import Model
-from mesa.space import SingleGrid, NetworkGrid
+from mesa.space import SingleGrid
 from mesa.time import RandomActivation
 from mesa.datacollection import DataCollector
 from spatialentropy import leibovici_entropy, altieri_entropy
@@ -44,7 +44,6 @@ class GridModel(Model):
         if self.use_network:
             self.network_p = network_p
             self.G = nx.erdos_renyi_graph(n=self.n_agents, p=self.network_p)
-            self.network = NetworkGrid(self.G)
             self.populate_network()
         
         # counts number happy agents upon initialization
@@ -109,9 +108,9 @@ class GridModel(Model):
         list_of_random_nodes = self.random.sample(self.G.nodes(), self.n_agents)
 
         for agent in self.schedule.agents:
-            node = list_of_random_nodes.pop()
-            agent.node = node
-            self.network._place_agent(agent, node)
+            node_id = list_of_random_nodes.pop()
+            agent.node = node_id
+            self.G.nodes[node_id]["agent"] = agent
 
 
     def step(self, collect=True):
