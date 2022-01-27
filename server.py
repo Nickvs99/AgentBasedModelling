@@ -67,12 +67,12 @@ height = 25
 resolution = 500
 grid = CanvasGrid(agent_portrayal, height, width, resolution*min(1, (height/width)), resolution*min(1, (width/height)))
 
+happy_counter = HappinessCounter()
+
 # Create a dynamic linegraph
 chart = ChartModule([{"Label": "happy",
                       "Color": "green"}],
                     data_collector_name='datacollector')
-
-happy_counter = HappinessCounter()
 
 proportion_agents = int(0.27 * width * height)
 parameters = {
@@ -82,7 +82,7 @@ parameters = {
     "init_positive": UserSettableParameter("slider","Number Positive Agents:",proportion_agents, 0, width*height, 0.01*width*height),
     "init_negative": UserSettableParameter("slider","Number Negative Agents:",proportion_agents, 0, width*height, 0.01*width*height), 
     "init_neutral": UserSettableParameter("slider","Number Neutral Agents:",proportion_agents, 0, width*height, 0.01*width*height),
-    "similar_wanted": UserSettableParameter("slider","Proportion Similarity Desired:",0.7, 0, 1, 0.1),
+    "similar_wanted": UserSettableParameter("slider","Proportion Similarity Desired:",3/8, 0, 1, 1/8),
     "use_network": UserSettableParameter("slider","Use network?", 0, 0, 1, 1),
     "network_p": UserSettableParameter("slider","Network parameter:",0.02, 0, 0.2, 0.01)
 }
