@@ -32,16 +32,17 @@ class GeneralAgent(Agent):
         return False
         
     def step(self): #, similar_wanted):
-        if not self.happy():
-            self.model.grid.move_to_empty(self)
-            # return False
-        # else:
-        #     self.model.happiness += 1
-            # return True
+        if not type(self) == Neutral:
+            if not self.happy():
+                self.model.grid.move_to_empty(self)
+                # return False
+            # else:
+            #     self.model.happiness += 1
+                # return True
 
-        if self.model.use_network:
-            for neutral in [neighbor for neighbor in self.network_neighbors() if type(neighbor) == Neutral]:
-                self.theta *= self.model.decrease_intolerance
+            if self.model.use_network:
+                for neutral in [neighbor for neighbor in self.network_neighbors() if type(neighbor) == Neutral]:
+                    self.theta *= self.model.decrease_intolerance
 
 
 class Positive(GeneralAgent):

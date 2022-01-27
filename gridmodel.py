@@ -124,14 +124,7 @@ class GridModel(Model):
 
         self.schedule.steps += 1 # Needed for OFAT
 
-        # happiness counter always includes neutral agents
-        # self.happiness = self.neutral
-        
-        # neutral agents don't move (always happy) so skip step if neutral
-        for agent in self.schedule.agents:
-            if type(agent) == Neutral:
-                continue
-            agent.step()
+        self.schedule.step()
 
         if self.happiness() == self.schedule.get_agent_count():
             self.running = False
