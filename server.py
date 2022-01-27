@@ -29,7 +29,7 @@ class Segregation_Param_Test(TextElement):
     Shows the number of happy agents
     """
     def render(self, model):
-        return "Average similar neighbors: " + str(np.mean([agent.similar_neighbors() for agent in model.schedule.agents]))
+        return "Average similar neighbors: " + str(np.mean([agent.similar_neighbors(agent.neighbors()) for agent in model.schedule.agents]))
 
 # You can change this to whatever ou want. Make sure to make the different types
 # of agents distinguishable
@@ -84,7 +84,8 @@ parameters = {
     "init_neutral": UserSettableParameter("slider","Number Neutral Agents:",proportion_agents, 0, width*height, 0.01*width*height),
     "similar_wanted": UserSettableParameter("slider","Proportion Similarity Desired:",3/8, 0, 1, 1/8),
     "use_network": UserSettableParameter("slider","Use network?", 0, 0, 1, 1),
-    "network_p": UserSettableParameter("slider","Network parameter:",0.02, 0, 0.2, 0.01)
+    "network_p": UserSettableParameter("slider","Network parameter:",0.02, 0, 0.2, 0.01),
+    "randomize_part": UserSettableParameter("slider","Randomize part of network at step:",0.0, 0, 1, 0.05)
 }
 
 # Create the server, and pass the grid and the graph
