@@ -60,6 +60,11 @@ def agent_portrayal(agent):
     else:
         portrayal["Color"] = "black"
 
+    if agent.model.use_network:
+      portrayal["text"] = "●"
+      enlightened = 1 - agent.theta/agent.model.similar_wanted
+      portrayal["text_color"] = "#" + f"{hex(int(255*(max(enlightened, isinstance(agent, agents.Negative))))).split('x')[-1].zfill(2)}" + f"{hex(int(255*(1-(1-(enlightened))*(1-0.5*isinstance(agent, agents.Positive))))).split('x')[-1].zfill(2)}" + f"{hex(int(255*(enlightened))).split('x')[-1].zfill(2)}" 
+    
     return portrayal
 
 width = 20
