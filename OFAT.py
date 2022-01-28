@@ -14,9 +14,9 @@ from itertools import combinations
 
 #Define parameters and bounds
 problem = {
-    'num_vars': 4,
-    'names': ['init_positive', 'init_negative', 'init_neutral', 'similar_wanted'],
-    'bounds': [[0, 0.33], [0, 0.33], [0, 0.33], [0, 1]]
+    'num_vars': 6,
+    'names': ['init_positive', 'init_negative', 'init_neutral', 'similar_wanted', 'width', 'height'],
+    'bounds': [[0, 0.33], [0, 0.33], [0, 0.33], [0, 1], [5, 100], [5, 100]]
 }
 
 # Set the repetitions, the amount of steps, and the amount of distinct values per variable
@@ -40,6 +40,10 @@ for i, var in enumerate(problem['names']):
         # Similar wanted only has 9 distinct values, there is no difference between a similar wanted
         # value of 0.9 vs 0.95 for example. Might need to chance when social structure is implemented.
     	samples = np.linspace(*problem['bounds'][i], num=9, dtype = float)
+    
+    elif var == 'width' or var == 'height':
+
+        samples = np.linspace(*problem['bounds'][i], num=distinct_samples, dtype=int)
     
     # Remove sample values who are present multiple times. No need to test them several times
     samples = np.unique(samples)
@@ -90,11 +94,10 @@ def plot_all_vars(df, param):
         param: the parameter to be plotted
     """
 
-    f, axs = plt.subplots(4, figsize=(7, 10))
+    f, axs = plt.subplots(6, figsize=(7, 10))
     
     for i, var in enumerate(problem['names']):
         plot_param_var_conf(axs[i], data[var], var, param, i)
-
 
 plot_all_vars(data, "Happy agents")
 plot_all_vars(data, "Entropy")
