@@ -90,7 +90,8 @@ parameters = {
     "similar_wanted": UserSettableParameter("slider","Proportion Similarity Desired:",3/8, 0, 1, 1/8),
     "use_network": UserSettableParameter("slider","Use network?", 0, 0, 1, 1),
     "network_p": UserSettableParameter("slider","Network parameter:",0.02, 0, 0.2, 0.01),
-    "randomize_part": UserSettableParameter("slider","Randomize part of network at step:",0.0, 0, 1, 0.05)
+    "randomize_part": UserSettableParameter("slider","Randomize part of network at step:",0.0, 0, 1, 0.05),
+    "decrease_intolerance": UserSettableParameter("slider","Neutral \"convincing rate\":",0.99, 0.9, 1, 0.001),
 }
 
 # Create the server, and pass the grid and the graph
