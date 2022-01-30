@@ -11,7 +11,7 @@ class GeneralAgent(Agent):
 
     def neighbors(self):
         # a list of the neighbors directly around the agent
-        return self.model.grid.get_neighbors(self.pos, moore=True, radius = 1)
+        return self.model.grid.get_neighbors(self.pos, moore=True, radius = self.model.radius)
 
     def network_neighbors(self):
         # a list of the neighbors connected to the agent
