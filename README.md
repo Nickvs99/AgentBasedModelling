@@ -1,17 +1,31 @@
 
 # AgentBasedModelling
-<p>Global parameters?/ some parameters are double unnecessary, clean-up</p>
-<p>Do we want to change from choosing number of each agents type, to have parameters choosing density, proportion minority agents and proportion neutral agents. Same number parameters however could be more user friendly?</p>
-<p> Start -> happy agents are rectangles. Once moved unhappy agents stay unhappy (circles) for one step before becoming happy (rect), should be happy straight away? </p>
-<p>Parameter distance neighbourhood?</p>
+<p>This model is an extension of Schellings segregation model. Schelling originally showed that a small bias in neighbour preference can have a significant effect on the segregation proportion in a large population. In this model we will be researching what the effects of neutral agents have on this effect originally found by Schelling.</p> 
 
-#### TODO:
-<ul>
-  <li> - [x] Grid + Model + Agents</li>
-  <li> - [x] Implemented agent segregation and server visualisation
-  <li> - [x] Add neutral agents
-  <li> - [x] Implement RandomScheduler</li>
-  <li> - [x] Add homophily and happiness atrributes/ and density/minority_pc from shelling example (also add effects of having neutral agent to this)</li>
-  <li> - [] Spatial component -> influence of schools on happiness(Blocks in grid with spatial component which increase happiness) </li>
-  <li> - [] Geo-shelling/polygons instead of grid</li>
-</ul>
+<p>
+To do this the research question will be answered: 
+> Does the introduction of neutral agents in a Schelling segregation model yield  increased entropy in comparison to a Schelling segregation model without neutral agents?
+</p>
+
+<p>To run this model type the following command in the AgentBasedModelling folder:
+`> ipython server.py`
+Legend for the model:
++ :green_square: = Happy Positive agents
++ :green_circle: = Unhappy Positive agents
++ :red_square: = Happy Negative agents
++ :red_circle: = Unhappy Negative agents
++ :black_large_square: = Happy Neutral agents
++ :white_large_square: = Unallocated living space 
+</p>
+
+<p>
+Like Schelling if an agent is unhappy due the lack of similarity of the surrounding neighbours, the agents will decide to move. However now the model also consists of neutral agents, which are always happy with the location they live and other agents consider neutral agents similar as well. Futhermore a social network has been added. This social network influences the preferences the agents have on the desired similarity in neighbours.
+The model consists of the changeable variables:
++ Number of Positive, Negative and Neutral agents
++ Preferred number of similar neighbours
++ Social network influence 
+</p>
+
+<P>
+Segregation is measured as the amount of entropy and the influence of the parameters in computed in the sensitivity analysis.
+</p>
