@@ -16,7 +16,7 @@ from itertools import combinations
 problem = {
     'num_vars': 4,
     'names': ['init_positive', 'init_negative', 'init_neutral', 'similar_wanted'],
-    'bounds': [[0, 33], [0, 33], [0, 33], [0.1, 0.8]]
+    'bounds': [[0, 0.33], [0, 0.33], [0, 0.33], [0.1, 0.8]]
 }
 
 # Set the repetitions, the amount of steps, and the amount of distinct values per variable
@@ -42,10 +42,6 @@ data['Run'], data['Happy agents'], data['Entropy'] = None, None, None
 
 for i in range(replicates):
     for vals in param_values: 
-        # Change parameters that should be integers
-        vals = list(vals)
-        for i in range(0, 3):
-        	vals[i] = int(vals[i])
 
         variable_parameters = {}
         for name, val in zip(problem['names'], vals):

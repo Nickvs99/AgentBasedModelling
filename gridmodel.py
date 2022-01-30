@@ -16,14 +16,25 @@ from agents import Positive, Negative, Neutral
 
 
 class GridModel(Model):
-    def __init__(self, width = 10, height = 10, init_positive = 33, init_negative = 33, init_neutral = 33, 
+    def __init__(self, width = 10, height = 10, init_positive = 0.33, init_negative = 0.33, init_neutral = 0.33, 
     similar_wanted = 0.75, use_network = 0, network_p = 0.02, randomize_part = 0.0, decrease_intolerance = 0.99):
-        
-        if init_positive + init_negative + init_neutral > width * height:
-            raise Exception("Error. You are trying to add more agents than there are grid cells.")
+        """
+        Initialize the GridModel. init_positive, init_negative, and init_neutral are relative
+        values, e.g. 5% of the grid needs to have neutral agents then set init_neutral to 0.05.
+        """
+
+        if init_positive + init_negative + init_neutral > 1:
+            raise Exception("Error. You are trying to add more agents than there are grid cells. " +
+                            "This might be because the init values have changed from " +
+                            "absolute values to relative values.")
 
         self.height = width
         self.width = height
+
+        init_positive = self.relative_to_absolute(init_positive)
+        init_negative = self.relative_to_absolute(init_negative)
+        init_neutral = self.relative_to_absolute(init_neutral)
+
         self.neutral = init_neutral
         self.similar_wanted = similar_wanted
 
@@ -59,8 +70,12 @@ class GridModel(Model):
             # For testing purposes, agent's individual x and y
             {"x": lambda a: a.pos[0], "y": lambda a: a.pos[1]},
         )
-        self.collect()
-        
+
+        self.collect() # Needs to be commented out when performing experiments.py
+    
+    def relative_to_absolute(self, value):
+        return int(round(value * self.width * self.height))
+    
     def new_agent(self, agent_type, pos):
         """ Add a new agent of type 'agent_type' to the grid at the position 'pos'. """
 
