@@ -17,7 +17,7 @@ from agents import Positive, Negative, Neutral
 
 class GridModel(Model):
     def __init__(self, width = 10, height = 10, init_positive = 0.33, init_negative = 0.33, init_neutral = 0.33, 
-    similar_wanted = 0.75, use_network = 0, network_p = 0.02, randomize_part = 0.0, decrease_intolerance = 0.99):
+    similar_wanted = 0.75, use_network = 0, network_p = 0.02, randomize_part = 0.0, decrease_intolerance = 0.99, radius = 1):
         """
         Initialize the GridModel. init_positive, init_negative, and init_neutral are relative
         values, e.g. 5% of the grid needs to have neutral agents then set init_neutral to 0.05.
@@ -37,6 +37,7 @@ class GridModel(Model):
 
         self.neutral = init_neutral
         self.similar_wanted = similar_wanted
+        self.radius = radius
 
         # shows happiness 0 before model starts
         # self.happiness = 0
