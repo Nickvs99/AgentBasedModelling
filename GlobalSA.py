@@ -14,17 +14,17 @@ from itertools import combinations
 
 #Define parameters and bounds
 problem = {
-    'num_vars': 4,
-    'names': ['init_positive', 'init_negative', 'init_neutral', 'similar_wanted'],
-    'bounds': [[0, 0.33], [0, 0.33], [0, 0.33], [0.1, 0.8]]
+    'num_vars': 7,
+    'names': ['init_positive', 'init_negative', 'init_neutral', 'similar_wanted', 'width', 'height', 'radius'],
+    'bounds': [[0, 0.33], [0, 0.33], [0, 0.33], [0.1, 0.8], [5, 100], [5, 100], [1, 5]]
 }
 
 # Set the repetitions, the amount of steps, and the amount of distinct values per variable
-replicates = 8
+replicates = 10
 max_steps = 100
 distinct_samples = 8
 
-model_reporters = {"Happy agents": lambda m: int(m.happiness),
+model_reporters = {"Happy agents": lambda m: int(m.happiness()),
                     "Entropy": lambda m: m.calc_entropy()}
 
 #Get samples
@@ -37,7 +37,7 @@ batch = BatchRunner(model,
 
 count = 0
 data = pd.DataFrame(index=range(replicates*len(param_values)), 
-                                columns=['init_positive', 'init_negative', 'init_neutral', 'similar_wanted'])
+                                columns=['init_positive', 'init_negative', 'init_neutral', 'similar_wanted', 'width', 'height', 'radius'])
 data['Run'], data['Happy agents'], data['Entropy'] = None, None, None
 
 for i in range(replicates):
@@ -45,13 +45,18 @@ for i in range(replicates):
 
         variable_parameters = {}
         for name, val in zip(problem['names'], vals):
+            if name == 'width' or name == 'height' or name == 'radius':
+                val = int(val)
             variable_parameters[name] = val
+
+        #Make integer for the width, height and radius parameters.
+        
 
         batch.run_iteration(variable_parameters, tuple(vals), count)
         iteration_data = batch.get_model_vars_dataframe().iloc[count]
         iteration_data['Run'] = count # Don't know what causes this, but iteration number is not correctly filled
-        data.iloc[count, 0:4] = vals
-        data.iloc[count, 4:7] = iteration_data
+        data.iloc[count, 0:7] = vals
+        data.iloc[count, 7:10] = iteration_data
         count += 1
         
         for i in range(10, 101, 10):
@@ -117,8 +122,3 @@ for i in range(len(order_labels)):
     plot_index(Si_entropy, problem['names'], order_labels[i], title_labels[i] + " " "(Entropy)")
     plt.savefig(save_results_to + title_labels[i] + "_Entropy" + '.png', bbox_inches="tight", dpi = 300)
     plt.show()
-
-
-
-
-
