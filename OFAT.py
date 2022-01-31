@@ -14,9 +14,9 @@ from itertools import combinations
 
 #Define parameters and bounds
 problem = {
-    'num_vars': 6,
-    'names': ['init_positive', 'init_negative', 'init_neutral', 'similar_wanted', 'width', 'height'],
-    'bounds': [[0, 0.33], [0, 0.33], [0, 0.33], [0, 1], [5, 100], [5, 100]]
+    'num_vars': 7,
+    'names': ['init_positive', 'init_negative', 'init_neutral', 'similar_wanted', 'width', 'height', 'radius'],
+    'bounds': [[0, 0.33], [0, 0.33], [0, 0.33], [0, 1], [5, 100], [5, 100], [1, 5]]
 }
 
 # Set the repetitions, the amount of steps, and the amount of distinct values per variable
@@ -32,18 +32,16 @@ data = {}
 
 for i, var in enumerate(problem['names']):
     # Get the bounds for this variable and get <distinct_samples> samples within this space (uniform)
-
-    samples = np.linspace(*problem['bounds'][i], num=distinct_samples, dtype = float)
-
-    if var == 'similar_wanted':
-        
-        # Similar wanted only has 9 distinct values, there is no difference between a similar wanted
-        # value of 0.9 vs 0.95 for example. Might need to chance when social structure is implemented.
-    	samples = np.linspace(*problem['bounds'][i], num=9, dtype = float)
-    
-    elif var == 'width' or var == 'height':
+    if var == 'width' or var == 'height' or var == 'radius':
 
         samples = np.linspace(*problem['bounds'][i], num=distinct_samples, dtype=int)
+
+    else:
+        samples = np.linspace(*problem['bounds'][i], num=distinct_samples, dtype = float)
+
+    
+    
+    
     
     # Remove sample values who are present multiple times. No need to test them several times
     samples = np.unique(samples)
@@ -94,7 +92,7 @@ def plot_all_vars(df, param):
         param: the parameter to be plotted
     """
 
-    f, axs = plt.subplots(6, figsize=(7, 10))
+    f, axs = plt.subplots(7, figsize=(7, 10))
     
     for i, var in enumerate(problem['names']):
         plot_param_var_conf(axs[i], data[var], var, param, i)

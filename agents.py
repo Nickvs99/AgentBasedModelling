@@ -11,7 +11,7 @@ class GeneralAgent(Agent):
 
     def neighbors(self):
         # a list of the neighbors directly around the agent
-        return self.model.grid.get_neighbors(self.pos, moore=True, radius = 1)
+        return self.model.grid.get_neighbors(self.pos, moore=True, radius = self.model.radius)
 
     def network_neighbors(self):
         # a list of the neighbors connected to the agent
@@ -35,10 +35,15 @@ class GeneralAgent(Agent):
         if not type(self) == Neutral:
             if not self.happy():
                 self.model.grid.move_to_empty(self)
-                # return False
-            # else:
-            #     self.model.happiness += 1
-                # return True
+            # code below: people now move to happy houses straight away ->
+            # model is completed with very few steps, effects for sensitivity analysis?
+            # does mean even desired neighbours at 1 can be run
+            # counter = 0
+            # while not self.happy():
+            #     counter += 1
+            #     self.model.grid.move_to_empty(self)
+            #     if counter == 10:
+            #         break
 
         elif self.model.use_network:
             for neighbor in self.network_neighbors():

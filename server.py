@@ -91,7 +91,8 @@ parameters = {
     "use_network": UserSettableParameter("slider","Use network?", 0, 0, 1, 1),
     "network_p": UserSettableParameter("slider","Network parameter:",0.02, 0, 0.2, 0.01),
     "randomize_part": UserSettableParameter("slider","Randomize part of network at step:",0.0, 0, 1, 0.05),
-    "decrease_intolerance": UserSettableParameter("slider","Neutral \"convincing rate\":",0.99, 0.9, 1, 0.001)
+    "decrease_intolerance": UserSettableParameter("slider","Neutral \"convincing rate\":",0.99, 0.9, 1, 0.001),
+    "radius": UserSettableParameter("slider", "Neighbourhood Radius:", 1, 0, 5, 1)
 }
 
 # Create the server, and pass the grid and the graph
