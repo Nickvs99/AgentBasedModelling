@@ -63,7 +63,7 @@ def agent_portrayal(agent):
     if agent.model.use_network:
       portrayal["text"] = "●"
       enlightened = 1 - agent.theta/agent.model.similar_wanted
-      portrayal["text_color"] = "#" + f"{hex(int(255*(max(enlightened, isinstance(agent, agents.Negative))))).split('x')[-1].zfill(2)}" + f"{hex(int(255*(1-(1-(enlightened))*(1-0.5*isinstance(agent, agents.Positive))))).split('x')[-1].zfill(2)}" + f"{hex(int(255*(enlightened))).split('x')[-1].zfill(2)}" 
+      portrayal["text_color"] = "#" + f"{hex(int(255*(max(enlightened, isinstance(agent, agents.Negative))))).split('x')[-1].zfill(2)}{hex(int(255*(1-(1-(enlightened))*(1-0.5*isinstance(agent, agents.Positive))))).split('x')[-1].zfill(2)}{hex(int(255*(enlightened))).split('x')[-1].zfill(2)}" 
     
     return portrayal
 
@@ -91,7 +91,7 @@ parameters = {
     "use_network": UserSettableParameter("slider","Use network?", 0, 0, 1, 1),
     "network_p": UserSettableParameter("slider","Network parameter:",0.02, 0, 0.2, 0.01),
     "randomize_part": UserSettableParameter("slider","Randomize part of network at step:",0.0, 0, 1, 0.05),
-    "decrease_intolerance": UserSettableParameter("slider","Neutral \"convincing rate\":",0.99, 0.9, 1, 0.001),
+    "decrease_intolerance": UserSettableParameter("slider","Neutral \"convincing rate\":",0.99, 0.9, 1, 0.001)
 }
 
 # Create the server, and pass the grid and the graph

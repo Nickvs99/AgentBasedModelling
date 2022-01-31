@@ -40,9 +40,9 @@ class GeneralAgent(Agent):
             #     self.model.happiness += 1
                 # return True
 
-            if self.model.use_network:
-                for neutral in [neighbor for neighbor in self.network_neighbors() if type(neighbor) == Neutral]:
-                    self.theta *= self.model.decrease_intolerance
+        elif self.model.use_network:
+            for neighbor in self.network_neighbors():
+                neighbor.theta *= self.model.decrease_intolerance
 
 
 class Positive(GeneralAgent):

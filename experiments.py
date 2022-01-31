@@ -36,6 +36,43 @@ def run_experiment_similar_wanted(attribute, ylabel="", n_iterations=10):
 
     plt.show()
 
+def run_experiment_network(attribute, ylabel="", n_iterations=10):
+    """
+    Plot a attribute of the model for different 'enlightenment' values.
+    The attribute has to be a key of the data collector.
+    """
+
+    values = np.linspace(0.001, 0.18, num=50, dtype=float)
+    avgs = []
+    stds = []
+
+    for value in values:
+        print(f"\rCalculating {attribute} for value = {value:.3f}", end="")
+
+        avg, std = collect_avg_and_std(
+            attribute,
+            width=20, height=20,
+            init_positive=0.4,
+            init_negative=0.4,
+            init_neutral=value,
+            similar_wanted=1,
+            n_iterations=n_iterations,
+            use_network=1, 
+            network_p = 0.04, 
+            randomize_part = 0.5,
+            decrease_intolerance=0.999
+        )
+
+        avgs.append(avg)
+        stds.append(std)
+
+    print()
+
+    line_plot(values, np.array(avgs), np.array(stds),
+              xlabel="value", ylabel=attribute)
+
+    plt.show()
+
 def run_experiment_neutrals(attribute, ylabel="", n_iterations=10):
 
     empty_spaces = 0.05
@@ -73,21 +110,27 @@ def run_experiment_neutrals(attribute, ylabel="", n_iterations=10):
     plt.legend()
     plt.show()
 
-def collect_avg_and_std(attribute, width=20, height=20, init_positive=190, init_negative=190, init_neutral=0, similar_wanted=0.75, n_iterations=10):
+def collect_avg_and_std(attribute, width=20, height=20, init_positive=190, init_negative=190, init_neutral=0, similar_wanted=0.75, 
+                        use_network = 0, network_p = 0.04, randomize_part = 0.2, decrease_intolerance = 0.99, n_iterations=10):
     """
     Run a model with the given parameters n times. Returns the average and standard
     deviation of the attribute.
     """
 
     values = []
+    
     for i in range(n_iterations):
-
+        
         model = GridModel(
             width=width, height=height,
             init_positive=init_positive,
             init_negative=init_negative,
             init_neutral=init_neutral,
-            similar_wanted=similar_wanted
+            similar_wanted=similar_wanted, 
+            use_network = use_network, 
+            network_p = network_p, 
+            randomize_part = randomize_part, 
+            decrease_intolerance = decrease_intolerance
         )
         model.run(collect=False)
 
@@ -120,8 +163,11 @@ if __name__ == "__main__":
     
     # TODO do both entropy and happiness experiment simultaneous
          
-    run_experiment_similar_wanted("happy", ylabel="Happiness level", n_iterations=25)
-    run_experiment_similar_wanted("entropy", ylabel="Entropy", n_iterations=25)
+    # run_experiment_similar_wanted("happy", ylabel="Happiness level", n_iterations=25)
+    # run_experiment_similar_wanted("entropy", ylabel="Entropy", n_iterations=25)
 
-    run_experiment_neutrals("happy", ylabel="Happiness level", n_iterations=25)
-    run_experiment_neutrals("entropy", ylabel="Entropy", n_iterations=25)
+    # run_experiment_neutrals("happy", ylabel="Happiness level", n_iterations=25)
+    # run_experiment_neutrals("entropy", ylabel="Entropy", n_iterations=25)
+
+    run_experiment_network("happy", ylabel="Happiness level", n_iterations=25)
+    run_experiment_network("entropy", ylabel="Entropy", n_iterations=25)
