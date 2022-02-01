@@ -16,23 +16,21 @@ from agents import Positive, Negative, Neutral
 
 
 class GridModel(Model):
-    def __init__(self, width = 10, height = 10, init_positive = 0.33, init_negative = 0.33, init_neutral = 0.33, 
-    similar_wanted = 0.75, use_network = 0, network_p = 0.02, randomize_part = 0.0, decrease_intolerance = 0.99, radius = 1):
+    def __init__(self, size = 10, density=0.75, init_neutral = 0.1, similar_wanted = 0.75,
+                 use_network = 0, network_p = 0.02, randomize_part = 0.0, decrease_intolerance = 0.99, radius = 1):
         """
         Initialize the GridModel. init_positive, init_negative, and init_neutral are relative
         values, e.g. 5% of the grid needs to have neutral agents then set init_neutral to 0.05.
         """
 
-        if init_positive + init_negative + init_neutral > 1:
+        if density + init_neutral > 1:
             raise Exception("Error. You are trying to add more agents than there are grid cells. " +
                             "This might be because the init values have changed from " +
                             "absolute values to relative values.")
+        self.size = size
 
-        self.height = width
-        self.width = height
-
-        init_positive = self.relative_to_absolute(init_positive)
-        init_negative = self.relative_to_absolute(init_negative)
+        init_positive = self.relative_to_absolute(density / 2)
+        init_negative = self.relative_to_absolute(density / 2)
         init_neutral = self.relative_to_absolute(init_neutral)
 
         self.neutral = init_neutral
@@ -44,7 +42,7 @@ class GridModel(Model):
         self.entropy = 0       
 
         self.schedule = RandomActivation(self)
-        self.grid = SingleGrid(self.width, self.height, torus=True)
+        self.grid = SingleGrid(self.size, self.size, torus=True)
 
         self.n_agents = 0
 
@@ -75,7 +73,7 @@ class GridModel(Model):
         self.collect() # Needs to be commented out when performing experiments.py
     
     def relative_to_absolute(self, value):
-        return int(round(value * self.width * self.height))
+        return int(round(value * self.size * self.size))
     
     def new_agent(self, agent_type, pos):
         """ Add a new agent of type 'agent_type' to the grid at the position 'pos'. """

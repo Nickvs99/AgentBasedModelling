@@ -67,10 +67,9 @@ def agent_portrayal(agent):
     
     return portrayal
 
-width = 20
-height = 25
+size = 20
 resolution = 500
-grid = CanvasGrid(agent_portrayal, height, width, resolution*min(1, (height/width)), resolution*min(1, (width/height)))
+grid = CanvasGrid(agent_portrayal, size, size, resolution, resolution)
 
 happy_counter = HappinessCounter()
 
@@ -79,14 +78,11 @@ chart = ChartModule([{"Label": "happy",
                       "Color": "green"}],
                     data_collector_name='datacollector')
 
-proportion_agents = 0.27
 parameters = {
-    "width": width,
-    "height": height,
+    "size": size,
     # proportion agents is starting value, then can slide from 0 to max agents with steps of 1% of agent number
-    "init_positive": UserSettableParameter("slider","Number Positive Agents:",proportion_agents, 0, 1, 0.005),
-    "init_negative": UserSettableParameter("slider","Number Negative Agents:",proportion_agents, 0, 1, 0.005), 
-    "init_neutral": UserSettableParameter("slider","Number Neutral Agents:",proportion_agents, 0, 1, 0.005),
+    "density": UserSettableParameter("slider","Density:",0.7, 0, 1, 0.01),
+    "init_neutral": UserSettableParameter("slider","Number Neutral Agents:",0.2, 0, 1, 0.01),
     "similar_wanted": UserSettableParameter("slider","Proportion Similarity Desired:",3/8, 0, 1, 1/8),
     "use_network": UserSettableParameter("slider","Use network?", 0, 0, 1, 1),
     "network_p": UserSettableParameter("slider","Network parameter:",0.02, 0, 0.2, 0.01),

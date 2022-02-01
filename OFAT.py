@@ -14,9 +14,9 @@ from itertools import combinations
 
 #Define parameters and bounds
 problem = {
-    'num_vars': 7,
-    'names': ['init_positive', 'init_negative', 'init_neutral', 'similar_wanted', 'width', 'height', 'radius'],
-    'bounds': [[0, 0.33], [0, 0.33], [0, 0.33], [0, 1], [5, 100], [5, 100], [1, 5]]
+    'num_vars': 5,
+    'names': ['density', 'init_neutral', 'similar_wanted', 'size', 'radius'],
+    'bounds': [[0.5, 0.85], [0, 0.2], [0, 1], [5, 100], [1, 5]]
 }
 
 # Set the repetitions, the amount of steps, and the amount of distinct values per variable
@@ -25,23 +25,19 @@ max_steps = 1000
 distinct_samples = 34
     
 # Set the outputs
-model_reporters = {"Happy agents": lambda m: int(m.happiness()),
+model_reporters = {"Happy agents": lambda m: m.happiness() / m.n_agents,
                     "Entropy": lambda m: m.calc_entropy()}
 
 data = {}
 
 for i, var in enumerate(problem['names']):
+    
     # Get the bounds for this variable and get <distinct_samples> samples within this space (uniform)
-    if var == 'width' or var == 'height' or var == 'radius':
-
+    if var == 'size' or var == 'radius':
         samples = np.linspace(*problem['bounds'][i], num=distinct_samples, dtype=int)
 
     else:
-        samples = np.linspace(*problem['bounds'][i], num=distinct_samples, dtype = float)
-
-    
-    
-    
+        samples = np.linspace(*problem['bounds'][i], num=distinct_samples, dtype = float) 
     
     # Remove sample values who are present multiple times. No need to test them several times
     samples = np.unique(samples)
@@ -92,7 +88,7 @@ def plot_all_vars(df, param):
         param: the parameter to be plotted
     """
 
-    f, axs = plt.subplots(7, figsize=(7, 10))
+    f, axs = plt.subplots(5, figsize=(7, 10))
     
     for i, var in enumerate(problem['names']):
         plot_param_var_conf(axs[i], data[var], var, param, i)

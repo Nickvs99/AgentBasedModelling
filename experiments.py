@@ -18,9 +18,8 @@ def run_experiment_similar_wanted(attribute, ylabel="", n_iterations=10):
 
         avg, std = collect_avg_and_std(
             attribute,
-            width=20, height=20,
-            init_positive=0.475,
-            init_negative=0.475,
+            size=20,
+            density=0.95,
             init_neutral=0,
             similar_wanted=similar_wanted,
             use_network=0,
@@ -52,9 +51,8 @@ def run_experiment_network(attribute, ylabel="", n_iterations=10):
 
         avg, std = collect_avg_and_std(
             attribute,
-            width=20, height=20,
-            init_positive=0.4,
-            init_negative=0.4,
+            size=20,
+            density=0.8,
             init_neutral=value,
             similar_wanted=1,
             n_iterations=n_iterations,
@@ -88,13 +86,12 @@ def run_experiment_neutrals(attribute, ylabel="", n_iterations=10):
         for init_neutral in init_neutral_values:
             print(f"\rCalculating {attribute} for similar_wanted = {similar_wanted:.3f} and init_neutral = {init_neutral:.3f}", end="")
 
-            init_positive = init_negative = (1 - empty_spaces - init_neutral) / 2
+            density = 1 - empty_spaces - init_neutral
             
             avg, std = collect_avg_and_std(
                 attribute,
-                width=10, height=10,
-                init_positive=init_positive,
-                init_negative=init_negative,
+                size=10, 
+                density=density,
                 init_neutral=init_neutral,
                 similar_wanted=similar_wanted,
                 use_network=1,
@@ -114,7 +111,7 @@ def run_experiment_neutrals(attribute, ylabel="", n_iterations=10):
     plt.legend()
     plt.show()
 
-def collect_avg_and_std(attribute, width=20, height=20, init_positive=190, init_negative=190, init_neutral=0, similar_wanted=0.75, 
+def collect_avg_and_std(attribute, size=20, density=0.8, init_neutral=0, similar_wanted=0.75, 
                         use_network = 0, network_p = 0.04, randomize_part = 0.2, decrease_intolerance = 0.99, n_iterations=10):
     """
     Run a model with the given parameters n times. Returns the average and standard
@@ -126,9 +123,8 @@ def collect_avg_and_std(attribute, width=20, height=20, init_positive=190, init_
     for i in range(n_iterations):
         
         model = GridModel(
-            width=width, height=height,
-            init_positive=init_positive,
-            init_negative=init_negative,
+            size=size,
+            density=density,
             init_neutral=init_neutral,
             similar_wanted=similar_wanted, 
             use_network = use_network, 
@@ -164,14 +160,12 @@ def line_plot(x_values, y_avgs, y_stds, xlabel="", ylabel="", title="", label=""
  
 
 if __name__ == "__main__": 
-    
-    # TODO do both entropy and happiness experiment simultaneous
-         
-    # run_experiment_similar_wanted("happy", ylabel="Happiness level", n_iterations=25)
-    # run_experiment_similar_wanted("entropy", ylabel="Entropy", n_iterations=25)
+             
+    run_experiment_similar_wanted("happy", ylabel="Happiness level", n_iterations=25)
+    run_experiment_similar_wanted("entropy", ylabel="Entropy", n_iterations=25)
 
-    # run_experiment_neutrals("happy", ylabel="Happiness level", n_iterations=25)
-    # run_experiment_neutrals("entropy", ylabel="Entropy", n_iterations=25)
+    run_experiment_neutrals("happy", ylabel="Happiness level", n_iterations=25)
+    run_experiment_neutrals("entropy", ylabel="Entropy", n_iterations=25)
 
     run_experiment_network("happy", ylabel="Happiness level", n_iterations=25)
     run_experiment_network("entropy", ylabel="Entropy", n_iterations=25)

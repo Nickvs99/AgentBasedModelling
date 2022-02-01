@@ -14,17 +14,17 @@ from itertools import combinations
 
 #Define parameters and bounds
 problem = {
-    'num_vars': 7,
-    'names': ['init_positive', 'init_negative', 'init_neutral', 'similar_wanted', 'width', 'height', 'radius'],
-    'bounds': [[0, 0.33], [0, 0.33], [0, 0.33], [0.1, 0.8], [5, 100], [5, 100], [1, 5]]
+    'num_vars': 5,
+    'names': ['density', 'init_neutral', 'similar_wanted', 'size', 'radius'],
+    'bounds': [[0.5, 0.85], [0, 0.2], [0.1, 0.8], [5, 100], [1, 5]]
 }
 
 # Set the repetitions, the amount of steps, and the amount of distinct values per variable
-replicates = 10
+replicates = 5
 max_steps = 100
 distinct_samples = 8
 
-model_reporters = {"Happy agents": lambda m: int(m.happiness()),
+model_reporters = {"Happy agents": lambda m: m.happiness() / m.n_agents,
                     "Entropy": lambda m: m.calc_entropy()}
 
 #Get samples
@@ -37,7 +37,7 @@ batch = BatchRunner(model,
 
 count = 0
 data = pd.DataFrame(index=range(replicates*len(param_values)), 
-                                columns=['init_positive', 'init_negative', 'init_neutral', 'similar_wanted', 'width', 'height', 'radius'])
+                                columns=['density', 'init_neutral', 'similar_wanted', 'size', 'radius'])
 data['Run'], data['Happy agents'], data['Entropy'] = None, None, None
 
 for i in range(replicates):
@@ -45,11 +45,11 @@ for i in range(replicates):
 
         variable_parameters = {}
         for name, val in zip(problem['names'], vals):
-            if name == 'width' or name == 'height' or name == 'radius':
+            if name == 'size' or name == 'radius':
                 val = int(val)
             variable_parameters[name] = val
 
-        #Make integer for the width, height and radius parameters.
+        #Make integer for the size and radius parameters.
         
 
         batch.run_iteration(variable_parameters, tuple(vals), count)
