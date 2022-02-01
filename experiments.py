@@ -23,6 +23,7 @@ def run_experiment_similar_wanted(attribute, ylabel="", n_iterations=10):
             init_negative=0.475,
             init_neutral=0,
             similar_wanted=similar_wanted,
+            use_network=0,
             n_iterations=n_iterations
         )
 
@@ -32,7 +33,7 @@ def run_experiment_similar_wanted(attribute, ylabel="", n_iterations=10):
     print()
 
     line_plot(similar_wanted_values, np.array(avgs), np.array(stds),
-              xlabel="similar_wanted", ylabel=attribute)
+              xlabel="similar_wanted", ylabel=ylabel)
 
     plt.show()
 
@@ -69,7 +70,7 @@ def run_experiment_network(attribute, ylabel="", n_iterations=10):
     print()
 
     line_plot(values, np.array(avgs), np.array(stds),
-              xlabel="value", ylabel=attribute)
+              xlabel="value", ylabel=ylabel)
 
     plt.show()
 
@@ -91,11 +92,14 @@ def run_experiment_neutrals(attribute, ylabel="", n_iterations=10):
             
             avg, std = collect_avg_and_std(
                 attribute,
-                width=20, height=20,
+                width=10, height=10,
                 init_positive=init_positive,
                 init_negative=init_negative,
                 init_neutral=init_neutral,
                 similar_wanted=similar_wanted,
+                use_network=1,
+                randomize_part=0.5,
+                network_p=0.04,
                 n_iterations=n_iterations
             )
 
@@ -105,7 +109,7 @@ def run_experiment_neutrals(attribute, ylabel="", n_iterations=10):
         print()
 
         line_plot(init_neutral_values * 100, np.array(avgs), np.array(stds),
-                xlabel="init_neutral [%]", ylabel=attribute, label=f"similar_wanted = {similar_wanted}")
+                xlabel="init_neutral [%]", ylabel=ylabel, label=f"similar_wanted = {similar_wanted}")
     
     plt.legend()
     plt.show()

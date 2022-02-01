@@ -66,7 +66,7 @@ class GridModel(Model):
         #         self.happiness += 1
 
         self.datacollector = DataCollector(
-            {"happy": lambda m: self.happiness(), # Model-level count of happy agents
+            {"happy": lambda m: self.happiness() / self.n_agents, # Model-level count of happy agents
              "entropy": "entropy"},
             # For testing purposes, agent's individual x and y
             {"x": lambda a: a.pos[0], "y": lambda a: a.pos[1]},
