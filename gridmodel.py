@@ -29,9 +29,10 @@ class GridModel(Model):
                             "absolute values to relative values.")
         self.size = size
 
-        init_positive = self.relative_to_absolute(density / 2)
-        init_negative = self.relative_to_absolute(density / 2)
-        init_neutral = self.relative_to_absolute(init_neutral)
+        total_agents = size * size * density
+        init_neutral = self.relative_to_absolute(total_agents * init_neutral)
+        init_positive = self.relative_to_absolute((total_agents - init_neutral) / 2)
+        init_negative = init_positive
 
         self.neutral = init_neutral
         self.similar_wanted = similar_wanted
