@@ -25,7 +25,7 @@ max_steps = 1000
 distinct_samples = 10
     
 # Set the outputs
-model_reporters = {"Happy agents": lambda m: m.happiness(),
+model_reporters = {"Happy agents": lambda m: m.happiness() / m.n_agents,
                     "Entropy": lambda m: m.calc_entropy()}
 
 data = {}
