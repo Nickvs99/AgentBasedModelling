@@ -16,8 +16,8 @@ from agents import Positive, Negative, Neutral
 
 
 class GridModel(Model):
-    def __init__(self, size = 10, density=0.75, init_neutral = 0.1, similar_wanted = 0.75,
-                 use_network = 0, network_p = 0.02, randomize_part = 0.0, decrease_intolerance = 0.99, radius = 1):
+    def __init__(self, size = 100, density=0.75, init_neutral = 0.33, similar_wanted = 0.75,
+                 use_network = 1, network_p = 0.02, randomize_part = 0.5, decrease_intolerance = 0.99, radius = 1):
         """
         Initialize the GridModel. init_positive, init_negative, and init_neutral are relative
         values, e.g. 5% of the grid needs to have neutral agents then set init_neutral to 0.05.
@@ -148,7 +148,7 @@ class GridModel(Model):
             self.collect()
 
         if self.use_network:
-            nx.algorithms.swap.double_edge_swap(self.G, nswap=int(self.randomize_part * self.n_agents), max_tries=1000)
+            nx.algorithms.swap.double_edge_swap(self.G, nswap=int(self.randomize_part * self.n_agents), max_tries=5000)
 
     def collect(self):
         self.entropy = self.calc_entropy()
