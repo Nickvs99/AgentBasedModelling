@@ -14,11 +14,10 @@ from itertools import combinations
 
 #Define parameters and bounds
 problem = {
-    'num_vars': 5,
-    'names': ['density', 'init_neutral', 'similar_wanted', 'size', 'radius'],
-    'bounds': [[0.5, 0.85], [0, 0.2], [0.1, 0.8], [5, 100], [1, 5]]
+    'num_vars': 8,
+    'names': ['density', 'init_neutral', 'similar_wanted', 'radius', 'network_p', 'randomize_part', 'decrease_intolerance','size'],
+    'bounds': [[0.5, 0.99], [0.1, 0.90], [0.01, 1], [1, 5], [0.01, 0.2], [0.01, 1], [0.9, 0.99], [10, 100]]
 }
-
 # Set the repetitions, the amount of steps, and the amount of distinct values per variable
 replicates = 5
 max_steps = 100
@@ -37,7 +36,7 @@ batch = BatchRunner(model,
 
 count = 0
 data = pd.DataFrame(index=range(replicates*len(param_values)), 
-                                columns=['density', 'init_neutral', 'similar_wanted', 'size', 'radius'])
+                                columns=['density', 'init_neutral', 'similar_wanted', 'radius', 'network_p', 'randomize_part', 'decrease_intolerance', 'size'])
 data['Run'], data['Happy agents'], data['Entropy'] = None, None, None
 
 for i in range(replicates):
@@ -55,8 +54,8 @@ for i in range(replicates):
         batch.run_iteration(variable_parameters, tuple(vals), count)
         iteration_data = batch.get_model_vars_dataframe().iloc[count]
         iteration_data['Run'] = count # Don't know what causes this, but iteration number is not correctly filled
-        data.iloc[count, 0:7] = vals
-        data.iloc[count, 7:10] = iteration_data
+        data.iloc[count, 0:8] = vals
+        data.iloc[count, 8:11] = iteration_data
         count += 1
         
         for i in range(10, 101, 10):
@@ -64,7 +63,7 @@ for i in range(replicates):
                 print(f'{i}% done!')
 print(data)
 
-#data.to_csv('GlobalSA_data.csv')
+data.to_csv('GlobalSA_data.csv')
 
 Si_happy_agents = sobol.analyze(problem, data['Happy agents'].values, calc_second_order=False, print_to_console=True)
 Si_entropy = sobol.analyze(problem, data['Entropy'].values, calc_second_order=False, print_to_console=True)
