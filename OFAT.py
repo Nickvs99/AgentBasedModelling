@@ -14,18 +14,18 @@ from itertools import combinations
 
 #Define parameters and bounds
 problem = {
-    'num_vars': 5,
-    'names': ['density', 'init_neutral', 'similar_wanted', 'size', 'radius'],
-    'bounds': [[0.5, 0.85], [0, 0.2], [0, 1], [5, 100], [1, 5]]
+    'num_vars': 8,
+    'names': ['density', 'init_neutral', 'similar_wanted', 'radius', 'network_p', 'randomize_part', 'decrease_intolerance', 'size'],
+    'bounds': [[0.5, 0.99], [0.1, 0.90], [0.01, 1], [1, 5], [0.01, 0.2], [0.01, 1], [0.9, 0.99], [10, 100]]
 }
 
 # Set the repetitions, the amount of steps, and the amount of distinct values per variable
-replicates = 25
+replicates = 10
 max_steps = 1000
-distinct_samples = 34
+distinct_samples = 10
     
 # Set the outputs
-model_reporters = {"Happy agents": lambda m: m.happiness() / m.n_agents,
+model_reporters = {"Happy agents": lambda m: m.happiness(),
                     "Entropy": lambda m: m.calc_entropy()}
 
 data = {}
@@ -33,7 +33,7 @@ data = {}
 for i, var in enumerate(problem['names']):
     
     # Get the bounds for this variable and get <distinct_samples> samples within this space (uniform)
-    if var == 'size' or var == 'radius':
+    if var == 'radius': #var == 'size'or 
         samples = np.linspace(*problem['bounds'][i], num=distinct_samples, dtype=int)
 
     else:
@@ -88,7 +88,7 @@ def plot_all_vars(df, param):
         param: the parameter to be plotted
     """
 
-    f, axs = plt.subplots(5, figsize=(7, 10))
+    f, axs = plt.subplots(8, figsize=(8, 10))
     
     for i, var in enumerate(problem['names']):
         plot_param_var_conf(axs[i], data[var], var, param, i)
