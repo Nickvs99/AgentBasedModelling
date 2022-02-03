@@ -23,10 +23,10 @@ class GridModel(Model):
         values, e.g. 5% of the grid needs to have neutral agents then set init_neutral to 0.05.
         """
 
-        if density > 1:
-            raise Exception("Error. You are trying to add more agents than there are grid cells. " +
-                            "This might be because the init values have changed from " +
-                            "absolute values to relative values.")
+        
+        if not 0 <= density <= 1:
+            raise Exception("Error. Invalid density value. density has to be between 0 and 1.")
+        
         self.size = size
 
         total_agents = size * size * density
@@ -38,8 +38,6 @@ class GridModel(Model):
         self.similar_wanted = similar_wanted
         self.radius = radius
 
-        # shows happiness 0 before model starts
-        # self.happiness = 0
         self.entropy = 0       
 
         self.schedule = RandomActivation(self)
@@ -59,15 +57,9 @@ class GridModel(Model):
             self.randomize_part = randomize_part
             self.decrease_intolerance = decrease_intolerance
         
-        # counts number happy agents upon initialization
-        # for agent in self.schedule.agents:
-        #     if agent.happy():
-        #         self.happiness += 1
-
         self.datacollector = DataCollector(
-            {"happy": lambda m: self.happiness() / self.n_agents, # Model-level count of happy agents
+            {"happy": lambda m: self.happiness() / self.n_agents, # Model-level count of happiness and entropy
              "entropy": "entropy"},
-            # For testing purposes, agent's individual x and y
             {"x": lambda a: a.pos[0], "y": lambda a: a.pos[1]},
         )
 
@@ -87,19 +79,6 @@ class GridModel(Model):
         self.schedule.add(new_agent)
 
         return new_agent
-        
-    # def remove_agent(self, agent):
-    #     """ Removes the agent from the grid. """
-        
-    #     self.n_agents -= 1
-        
-    #     self.grid.remove_agent(agent)        
-    #     self.agents.remove(agent)
-
-    # def move_agent(self, agent, new_pos):
-    #     """ Moves the agent to a new position. """
-
-    #     self.model.grid.move_agent(agent, new_pos)
 
     def get_random_empty_pos(self):
         """ Return a random unoccupied position. """
@@ -136,8 +115,6 @@ class GridModel(Model):
         '''
         Method that calls the step method for each of the agents.
         '''
-
-        self.schedule.steps += 1 # Needed for OFAT
 
         self.schedule.step()
 
