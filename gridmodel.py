@@ -43,7 +43,7 @@ class GridModel(Model):
         self.entropy = 0       
 
         self.schedule = RandomActivation(self)
-        self.grid = SingleGrid(self.size, self.size, torus=True)
+        self.grid = SingleGrid(int(self.size), int(self.size), torus=True)
 
         self.n_agents = 0
 
