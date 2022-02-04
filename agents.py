@@ -31,24 +31,14 @@ class GeneralAgent(Agent):
         
         return False
         
-    def step(self): #, similar_wanted):
+    def step(self):
         if not type(self) == Neutral:
             if not self.happy():
                 self.model.grid.move_to_empty(self)
-            # code below: people now move to happy houses straight away ->
-            # model is completed with very few steps, effects for sensitivity analysis?
-            # does mean even desired neighbours at 1 can be run
-            # counter = 0
-            # while not self.happy():
-            #     counter += 1
-            #     self.model.grid.move_to_empty(self)
-            #     if counter == 10:
-            #         break
 
         elif self.model.use_network:
             for neighbor in self.network_neighbors():
                 neighbor.theta *= self.model.decrease_intolerance
-
 
 class Positive(GeneralAgent):
 

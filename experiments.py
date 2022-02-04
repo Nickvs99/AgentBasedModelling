@@ -73,9 +73,11 @@ def run_experiment_network(attribute, ylabel="", n_iterations=10):
     plt.show()
 
 def run_experiment_neutrals(attribute, ylabel="", n_iterations=10):
-
-    empty_spaces = 0.05
-
+    """
+    Plot the impact of neutrals on 'attribute'.
+    The attribute has to be a key of the data collector.
+    """
+ 
     init_neutral_values = np.linspace(0, 0.5, num=11, dtype=float)
     similar_wanted_values = np.linspace(0, 1, num=9, dtype=float)
 
@@ -85,13 +87,11 @@ def run_experiment_neutrals(attribute, ylabel="", n_iterations=10):
 
         for init_neutral in init_neutral_values:
             print(f"\rCalculating {attribute} for similar_wanted = {similar_wanted:.3f} and init_neutral = {init_neutral:.3f}", end="")
-
-            density = 1 - empty_spaces - init_neutral
             
             avg, std = collect_avg_and_std(
                 attribute,
                 size=10, 
-                density=density,
+                density=0.95,
                 init_neutral=init_neutral,
                 similar_wanted=similar_wanted,
                 use_network=1,
@@ -106,7 +106,7 @@ def run_experiment_neutrals(attribute, ylabel="", n_iterations=10):
         print()
 
         line_plot(init_neutral_values * 100, np.array(avgs), np.array(stds),
-                xlabel="init_neutral [%]", ylabel=ylabel, label=f"similar_wanted = {similar_wanted}")
+                xlabel="proportion neutral [%]", ylabel=ylabel, label=f"similar_wanted = {similar_wanted}")
     
     plt.legend()
     plt.show()
