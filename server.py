@@ -1,49 +1,28 @@
-from mesa.visualization.modules import CanvasGrid, TextElement
+from mesa.visualization.modules import CanvasGrid, ChartModule, TextElement
 from mesa.visualization.ModularVisualization import ModularServer
-from mesa.visualization.modules import ChartModule
 from mesa.visualization.UserParam import UserSettableParameter
 
 from gridmodel import *
 import agents
 
-# Import the implemented classes
-import IPython
-import os
-import sys
-
-# # Change stdout so we can ignore most prints etc.
-# orig_stdout = sys.stdout
-# sys.stdout = open(os.devnull, 'w')
-# IPython.get_ipython().magic("run gridmodel.py")
-# sys.stdout = orig_stdout
-
 class HappinessCounter(TextElement):
     """
-    Shows the number of happy agents
+    Shows the number of happy agents.
     """
     def render(self, model):
         return f"Happy agents: {int(sum([agent.happy() for agent in model.schedule.agents]))}/{model.schedule.get_agent_count()}"
 
-class Segregation_Param_Test(TextElement):
+class Avg_Similar(TextElement):
     """
-    Shows the number of happy agents
+    Shows the average number of similar neighbors an agent has.
     """
     def render(self, model):
         return "Average similar neighbors: " + str(np.mean([agent.similar_neighbors(agent.neighbors()) for agent in model.schedule.agents]))
 
-# You can change this to whatever ou want. Make sure to make the different types
-# of agents distinguishable
 def agent_portrayal(agent):
-    portrayal = {
-                #"Shape": "circle",
-                # "Shape": "rect",
-                #  "Color": "green",
-                 "Filled": "true",
-                 "Layer": 0,
-                #  "r": 1,
-                # "w": 1,
-                # "h": 1,
-                 }
+    portrayal = {"Filled": "true",
+                 "Layer": 0}
+
     # happy agents are rect and unhappy circles
     if not agent.happy():
         portrayal["Shape"] = "circle"
@@ -61,9 +40,9 @@ def agent_portrayal(agent):
         portrayal["Color"] = "black"
 
     if agent.model.use_network:
-      portrayal["text"] = "●"
-      enlightened = 1 - agent.theta/agent.model.similar_wanted
-      portrayal["text_color"] = "#" + f"{hex(int(255*(max(enlightened, isinstance(agent, agents.Negative))))).split('x')[-1].zfill(2)}{hex(int(255*(1-(1-(enlightened))*(1-0.5*isinstance(agent, agents.Positive))))).split('x')[-1].zfill(2)}{hex(int(255*(enlightened))).split('x')[-1].zfill(2)}" 
+        portrayal["text"] = "●"
+        enlightened = 1 - agent.theta/agent.model.similar_wanted
+        portrayal["text_color"] = "#" + f"{hex(int(255*(max(enlightened, isinstance(agent, agents.Negative))))).split('x')[-1].zfill(2)}{hex(int(255*(1-(1-(enlightened))*(1-0.5*isinstance(agent, agents.Positive))))).split('x')[-1].zfill(2)}{hex(int(255*(enlightened))).split('x')[-1].zfill(2)}" 
     
     return portrayal
 
@@ -73,9 +52,11 @@ grid = CanvasGrid(agent_portrayal, size, size, resolution, resolution)
 
 happy_counter = HappinessCounter()
 
-# Create a dynamic linegraph
+# create a dynamic linegraph
 chart = ChartModule([{"Label": "happy",
-                      "Color": "green"}],
+                      "Color": "green"},
+                      {"Label": "entropy",
+                      "Color": "red"}],
                     data_collector_name='datacollector')
 
 parameters = {
@@ -91,9 +72,9 @@ parameters = {
     "radius": UserSettableParameter("slider", "Neighbourhood Radius:", 1, 0, 5, 1)
 }
 
-# Create the server, and pass the grid and the graph
+# create the server, and pass the grid and the graph
 server = ModularServer(GridModel,
-                       [grid, happy_counter, Segregation_Param_Test(), chart],
+                       [grid, happy_counter, Avg_Similar(), chart],
                        "Segregation Model",
                        parameters)
 

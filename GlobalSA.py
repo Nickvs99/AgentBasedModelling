@@ -10,25 +10,23 @@ import numpy as np
 import matplotlib.pyplot as plt
 from itertools import combinations
 
-
-
-#Define parameters and bounds
+# define parameters and bounds
 problem = {
     'num_vars': 8,
     'names': ['density', 'init_neutral', 'similar_wanted', 'radius','size','network_p', 'randomize_part', 'decrease_intolerance'],
     'bounds': [[0.1, 0.9], [0, 0.9], [0, 1], [1, 5], [5, 100], [0, 0.3], [0, 0.3], [0.9, 0.99]]
 }
-# Set the repetitions, the amount of steps, and the amount of distinct values per variable
+
+# set the repetitions, the amount of steps, and the amount of distinct values per variable
 replicates = 10
 max_steps = 100
 distinct_samples = 8
 
 model_reporters = {'Entropy': lambda m: m.calc_entropy(), 
-"Happy agents": lambda m: m.happiness()}
+                   'Happy agents': lambda m: m.happiness()}
 
-#Get samples
+# get samples
 param_values = saltelli.sample(problem, distinct_samples, calc_second_order = False)
-
 
 batch = BatchRunner(model, 
                     max_steps=max_steps,
@@ -43,19 +41,16 @@ data['Run'], data['Entropy'], data['Happy agents'] = None, None, None
 
 for i in range(replicates):
     for vals in param_values: 
-
         variable_parameters = {}
+
         for name, val in zip(problem['names'], vals):
             if name == 'size' or name == 'radius':
                 val = int(val)
             variable_parameters[name] = val
-
-        #Make integer for the size and radius parameters.
         
-
         batch.run_iteration(variable_parameters, tuple(vals), count)
         iteration_data = batch.get_model_vars_dataframe().iloc[count]
-        iteration_data['Run'] = count # Don't know what causes this, but iteration number is not correctly filled
+        iteration_data['Run'] = count
         data.iloc[count, 0:8] = vals
         data.iloc[count, 8:11] = iteration_data
         count += 1
@@ -63,15 +58,14 @@ for i in range(replicates):
         for i in range(10, 101, 10):
             if count / (len(param_values) * (replicates)) * 100 == i:
                 print(f'{i}% done!')
+
 print(data)
 
-
-#Unhash to retrieve data as csv file
-#data.to_csv('GlobalSA_data.csv')
+# unhash to retrieve data as csv file
+# data.to_csv('GlobalSA_data.csv')
 
 Si_happy_agents = sobol.analyze(problem, data['Happy agents'].values, calc_second_order=False, print_to_console=True)
 Si_entropy = sobol.analyze(problem, data['Entropy'].values, calc_second_order=False, print_to_console=True)
-
 
 def plot_index(s, params, i, title=''):
     """
@@ -111,15 +105,15 @@ order_labels = ['1', 'T']
 title_labels = ['First order sensitivity', 'Total order sensitivity']  
 Si_labels = ['Happy agents', 'Entropy']  
 
-# Very simple code to save the sensivity analysis plots to the desired working directory
-#save_results_to = 'C:/Users/ysijp/OneDrive/Bureaublad/Agent-Based Modelling/GroupProject/Figures/'
+# very simple code to save the sensivity analysis plots to the desired working directory
+# save_results_to = 'C:/Users/ysijp/OneDrive/Bureaublad/Agent-Based Modelling/GroupProject/Figures/'
 
 for i in range(len(order_labels)):
     plot_index(Si_happy_agents, problem['names'], order_labels[i], title_labels[i] + " " "(Happy agents)")
-    #plt.savefig(save_results_to + title_labels[i] + "_Happy agents" + '.png', bbox_inches="tight",  dpi = 300)
+    # plt.savefig(save_results_to + title_labels[i] + "_Happy agents" + '.png', bbox_inches="tight",  dpi = 300)
     plt.show()
 
 for i in range(len(order_labels)):
     plot_index(Si_entropy, problem['names'], order_labels[i], title_labels[i] + " " "(Entropy)")
-    #plt.savefig(save_results_to + title_labels[i] + "_Entropy" + '.png', bbox_inches="tight", dpi = 300)
+    # plt.savefig(save_results_to + title_labels[i] + "_Entropy" + '.png', bbox_inches="tight", dpi = 300)
     plt.show()
