@@ -39,7 +39,8 @@ def agent_portrayal(agent):
     else:
         portrayal["Color"] = "black"
 
-    # show a circle in the middle of an agent that gets brighter when its theta has been reduced
+    # show a circle in the middle of an agent that gets brighter 
+    # when its theta has been reduced by its neutral neighbors
     if agent.model.use_network:
         portrayal["text"] = "●"
         enlightened = 1 - agent.theta/agent.model.similar_wanted
