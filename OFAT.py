@@ -88,7 +88,7 @@ def plot_all_vars(df, param):
         param: the parameter to be plotted
     """
 
-    f, axs = plt.subplots(7, figsize=(8, 10))
+    f, axs = plt.subplots(8, figsize=(8, 10))
     
     for i, var in enumerate(problem['names']):
         plot_param_var_conf(axs[i], data[var], var, param, i)
