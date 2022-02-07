@@ -10,21 +10,21 @@ import pandas as pd
 import numpy as np
 from itertools import combinations
 
-#One factor at a time local sensitivity analysis
+# one factor at a time local sensitivity analysis
 
-#Define parameters and bounds
+# define parameters and bounds
 problem = {
     'num_vars': 8,
     'names': ['density', 'init_neutral', 'similar_wanted', 'radius', 'network_p', 'randomize_part', 'decrease_intolerance', 'size'],
     'bounds': [[0.5, 0.99], [0.1, 0.90], [0.01, 1], [1, 5], [0.01, 0.2], [0.01, 1], [0.9, 0.99], [10, 100]]
 }
 
-# Set the repetitions, the amount of steps, and the amount of distinct values per variable
+# set the repetitions, the amount of steps, and the amount of distinct values per variable
 replicates = 10
 max_steps = 1000
 distinct_samples = 10
     
-# Set the outputs
+# set the outputs
 model_reporters = {"Happy agents": lambda m: m.happiness() / m.n_agents,
                     "Entropy": lambda m: m.calc_entropy()}
 
@@ -32,14 +32,14 @@ data = {}
 
 for i, var in enumerate(problem['names']):
     
-    # Get the bounds for this variable and get <distinct_samples> samples within this space (uniform)
+    # get the bounds for this variable and get <distinct_samples> samples within this space (uniform)
     if var == 'radius': #var == 'size'or 
         samples = np.linspace(*problem['bounds'][i], num=distinct_samples, dtype=int)
 
     else:
         samples = np.linspace(*problem['bounds'][i], num=distinct_samples, dtype = float) 
     
-    # Remove sample values who are present multiple times. No need to test them several times
+    # remove sample values who are present multiple times. No need to test them several times
     samples = np.unique(samples)
 
     batch = BatchRunner(GridModel, 
@@ -96,4 +96,3 @@ def plot_all_vars(df, param):
 plot_all_vars(data, "Happy agents")
 plot_all_vars(data, "Entropy")
 plt.show()
-      
