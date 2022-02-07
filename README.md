@@ -23,10 +23,14 @@ Legend for the model:
 Like Schelling if an agent is unhappy due the lack of similarity of the surrounding neighbours, the agents will decide to move. However now the model also consists of neutral agents, which are always happy with the location they live and other agents consider neutral agents similar as well. Futhermore a social network has been added. This social network influences the preferences the agents have on the desired similarity in neighbours.
 The model consists of the changeable variables:
 <ul>
-  <li>Number of Positive, Negative and Neutral agents</li>
+  <li>Density and proportion neutral agents</li>
   <li>Preferred number of similar neighbours</li>
   <li>Social network influence </li>
 </ul>
 
 ### Analysis
-Segregation is measured as the amount of entropy and the influence of the parameters in computed in the sensitivity analysis.
+The total number of happy agents is colelcted and segregation is measured as the amount of entropy and the influence of the parameters in computed in the sensitivity analysis.
+
+
+### Presentation
+The powerpoint of our presentation is found [here](https://github.com/Nickvs99/AgentBasedModelling/blob/main/Presentation_Schelling+Neutral.pdf).
